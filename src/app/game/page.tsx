@@ -1,26 +1,22 @@
 'use client'
 
-import { Stage, Container, Sprite, Text } from '@pixi/react';
-import { TextStyle } from 'pixi.js';
+import { Game } from "@/components/Game";
 
-export default function Game() 
-{
-  //const blurFilter = useMemo(() => new BlurFilter(4), []);
+//import { Application, Circle, Graphics } from "pixi.js";
 
+//import { Stage, Container, Sprite, Text } from '@pixi/react';
+
+export default function GamePage() {
   return (
-    <Stage>
-      <Sprite
-        image="https://pixijs.io/pixi-react/img/bunny.png"
-        x={400}
-        y={270}
-        anchor={{ x: 0.5, y: 0.5 }}
-      />
+    <div>
+      <Game></Game>
+    </div>
+    // <Stage width={window.innerWidth} height={window.innerHeight} ref={stage}>
+    //   <Sprite image="https://pixijs.io/pixi-react/img/bunny.png" x={100} y={100} anchor={{ x: 0.5, y: 0.5 }} />
 
-      <Container x={400} y={330}>
-        <Text text="Hello World" anchor={{ x: 0.5, y: 0.5 }} style={new TextStyle({
-            fill: '#ffffff'
-        })} />
-      </Container>
-    </Stage>
+    //   <Container x={400} y={330}>
+    //     <Text text="Hello World" anchor={{ x: 0.5, y: 0.5 }} />
+    //   </Container>
+    // </Stage>
   );
 };

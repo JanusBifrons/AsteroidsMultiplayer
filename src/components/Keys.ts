@@ -16,6 +16,8 @@ export const enum Keys {
     A = 65,
     C = 67,
     D = 68,
+    E = 69,
+    Q = 81,
     R = 82,
     S = 83,
     V = 86,

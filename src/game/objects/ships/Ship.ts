@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Point } from "pixi.js";
 import { Input } from "../../../components/Input";
 import { Keys } from "../../../components/Keys";
 import { Vector } from "../../../components/Vector";
@@ -28,11 +28,11 @@ export class Ship {
     protected _scale: number;
 
     constructor() {
-        this._container = new Container();
-
         this._position = new Vector(0, 0);
         this._rotation = 0;
         this._scale = 1;
+
+        this._container = new Container();
     }
 
     ///

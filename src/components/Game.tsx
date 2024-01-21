@@ -1,11 +1,10 @@
 'use client'
 
-import { Application, Circle, Graphics } from "pixi.js";
+import { Application, Container, Graphics } from "pixi.js";
 import React, { RefObject } from "react";
 import { ReactNode } from "react";
 import { Input } from "./Input";
 import { Keys } from "./Keys";
-import { Ship } from "../game/objects/ships/Ship";
 import { Grid } from "./Grid";
 import { Vector } from "./Vector";
 import { Havoc } from "@/game/objects/ships/Havoc";
@@ -32,7 +31,7 @@ export class Game extends React.Component {
 
             this._screenOffset = new Vector((window.innerWidth / 2), (window.innerHeight / 2));
 
-            this._application = new Application({ height: window.innerHeight, width: window.innerWidth });
+            this._application = new Application({ background: '#141414', resizeTo: window });
 
             this.div.current.appendChild(this._application.view as HTMLCanvasElement);
 
@@ -59,13 +58,20 @@ export class Game extends React.Component {
                 ship.update();
                 ship.draw();
 
-                this._application.stage.scale = { x: this._scale, y: this._scale };
-
                 this._application.stage.pivot = new Vector(ship.position.x - this._screenOffset.x, ship.position.y - this._screenOffset.y);
             });
 
-            this._application.stage.addChild(gridGraphics);
-            this._application.stage.addChild(ship.container);
+
+            const container = new Container();
+            container.addChild(gridGraphics);
+            container.addChild(ship.container);
+
+
+
+
+            //this._application.stage.addChild(gridGraphics);
+            //this._application.stage.addChild(ship.container);
+            this._application.stage.addChild(container);
         }
     }
 

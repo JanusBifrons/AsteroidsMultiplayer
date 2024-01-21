@@ -1,4 +1,6 @@
-export class Vector {
+import { IPointData } from "pixi.js";
+
+export class Vector implements IPointData {
 
     constructor(public x: number, public y: number) {
     }
@@ -28,14 +30,14 @@ export class Vector {
 
         let nX: number = cVector.x / nLength;
         let nY: number = cVector.y / nLength;
-        
+
         return new Vector(nX, nY);
     }
 
     static DirectionTo(cVectorFrom: Vector, cVectorTo: Vector): number {
         var nX = cVectorTo.x - cVectorFrom.x;
         var nY = cVectorTo.y - cVectorFrom.y;
-        
+
         return Math.atan2(nY, nX);
     }
 
@@ -56,7 +58,7 @@ export class Vector {
     }
 
     public equals(cVector: Vector): boolean {
-        if(cVector.x == this.x && cVector.y == this.y)
+        if (cVector.x == this.x && cVector.y == this.y)
             return true;
 
         return false;
@@ -67,16 +69,16 @@ export class Vector {
     }
 
     public limit(nLimit: number) {
-        if(this.x >= nLimit)
+        if (this.x >= nLimit)
             this.x = nLimit;
 
-        if(this.x <= -nLimit)
+        if (this.x <= -nLimit)
             this.x = -nLimit;
 
-        if(this.y >= nLimit)
+        if (this.y >= nLimit)
             this.y = nLimit;
 
-        if(this.y <= -nLimit)
+        if (this.y <= -nLimit)
             this.y = -nLimit;
     }
 
@@ -84,11 +86,11 @@ export class Vector {
     /// PROPERTIES
     ///
 
-    get magnitude(): number {
+    public get magnitude(): number {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    get length(): number {
+    public get length(): number {
         return Math.atan2(this.y, this.x);
     }
 }

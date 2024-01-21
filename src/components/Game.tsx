@@ -1,43 +1,81 @@
 'use client'
 
-import { Application, Circle, Graphics, IPointData } from "pixi.js";
+import { Application, Circle, Graphics } from "pixi.js";
 import React, { RefObject } from "react";
 import { ReactNode } from "react";
 import { Input } from "./Input";
 import { Keys } from "./Keys";
-import { Cockpit } from "./Cockpit";
-import { Ship } from "./Ship";
+import { Ship } from "../game/objects/ships/Ship";
+import { Grid } from "./Grid";
+import { Vector } from "./Vector";
+import { Havoc } from "@/game/objects/ships/Havoc";
 
 export class Game extends React.Component {
 
     private div: RefObject<HTMLDivElement>;
-    private application: Application;
+    private _application: Application;
+    private _scale: number = 0.5;
+    private _screenOffset: Vector;
 
     constructor(props: any) {
         super(props);
 
         this.div = React.createRef();
+
+        this.updateScale();
     }
 
     componentDidMount(): void {
-        if (!this.application) {
-            this.application = new Application({ height: window.innerHeight, width: window.innerWidth });
+        if (!this._application) {
+            this._screenOffset = new Vector((window.innerWidth / 2) * 2, (window.innerHeight / 2) * 2);
 
-            this.div.current.appendChild(this.application.view as HTMLCanvasElement);
+            this._application = new Application({ height: window.innerHeight, width: window.innerWidth });
 
-            this.application.stage.pivot.x
-            const graphics = new Graphics();
-            const ship = new Ship(graphics);
+            this.div.current.appendChild(this._application.view as HTMLCanvasElement);
 
-            this.application.ticker.add(() => {
+            this._application.stage.pivot.x
+            const gridGraphics = new Graphics();
+
+            const ship = new Havoc();
+            const grid = new Grid(gridGraphics);
+
+            this._application.ticker.add(() => {
                 Input.Update();
+
+                if (Input.IsKeyDown(Keys.NumpadPlus)) {
+                    this.updateScale(-0.01);
+                }
+
+                if (Input.IsKeyDown(Keys.NumpadMinus)) {
+                    this.updateScale(0.01);
+                }
+
+                grid.drawGrid(ship.position);
+
                 ship.update();
-                ship.draw(graphics);
+                ship.draw();
+
+                this._application.stage.scale = { x: this._scale, y: this._scale };
+
+                this._application.stage.pivot = new Vector(ship.position.x - this._screenOffset.x, ship.position.y - this._screenOffset.y);
             });
 
-            this.application.stage.addChild(graphics);
+            this._application.stage.addChild(gridGraphics);
+            this._application.stage.addChild(...ship.graphics);
         }
     }
+
+    ///
+    /// PRIVATE
+    ///
+
+    private updateScale(change: number = 0): void {
+        this._scale += change;
+    }
+
+    ///
+    /// PUBLIC
+    ///
 
     public render(): ReactNode {
         return (

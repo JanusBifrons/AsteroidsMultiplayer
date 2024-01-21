@@ -17,8 +17,8 @@ export class Grid {
         let nSize: number = 5000;
         let nGridSize: number = 10;
         let nSmallGridSize: number = 10;
-        let nThick: number = 5;
-        let nThin: number = 2;
+        let nThick: number = 2;
+        let nThin: number = 1;
 
         let nX: number = (Math.round(offset.x / nSize) * nSize) - (nSize * (nGridSize / 2));
         let nY: number = (Math.round(offset.y / nSize) * nSize) - (nSize * (nGridSize / 2));

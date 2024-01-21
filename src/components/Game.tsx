@@ -9,12 +9,13 @@ import { Ship } from "../game/objects/ships/Ship";
 import { Grid } from "./Grid";
 import { Vector } from "./Vector";
 import { Havoc } from "@/game/objects/ships/Havoc";
+import { Timer } from "./Timer";
 
 export class Game extends React.Component {
 
     private div: RefObject<HTMLDivElement>;
     private _application: Application;
-    private _scale: number = 0.5;
+    private _scale: number = 1;
     private _screenOffset: Vector;
 
     constructor(props: any) {
@@ -27,7 +28,9 @@ export class Game extends React.Component {
 
     componentDidMount(): void {
         if (!this._application) {
-            this._screenOffset = new Vector((window.innerWidth / 2) * 2, (window.innerHeight / 2) * 2);
+            Timer.Init();
+
+            this._screenOffset = new Vector((window.innerWidth / 2), (window.innerHeight / 2));
 
             this._application = new Application({ height: window.innerHeight, width: window.innerWidth });
 
@@ -41,6 +44,7 @@ export class Game extends React.Component {
 
             this._application.ticker.add(() => {
                 Input.Update();
+                Timer.TIMER().update();
 
                 if (Input.IsKeyDown(Keys.NumpadPlus)) {
                     this.updateScale(-0.01);
@@ -61,7 +65,7 @@ export class Game extends React.Component {
             });
 
             this._application.stage.addChild(gridGraphics);
-            this._application.stage.addChild(...ship.graphics);
+            this._application.stage.addChild(ship.container);
         }
     }
 

@@ -82,6 +82,10 @@ export class Vector implements IPointData {
             this.y = -nLimit;
     }
 
+    public toArray(): [number, number] {
+        return [this.x, this.y];
+    }
+
     ///
     /// PROPERTIES
     ///

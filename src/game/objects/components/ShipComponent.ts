@@ -11,6 +11,7 @@ export abstract class ShipComponent {
     protected _mirrored: boolean;
     protected _scale: number;
     protected _graphics: Graphics;
+    protected _points: Vector[] = [];
 
     ///
     /// PRIVATE
@@ -40,5 +41,9 @@ export abstract class ShipComponent {
 
     public get graphics(): Graphics {
         return this._graphics;
+    }
+
+    public get points(): [number, number][] {
+        return this._points.map(p => p.toArray());
     }
 }

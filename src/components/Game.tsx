@@ -9,13 +9,17 @@ import { Grid } from "./Grid";
 import { Vector } from "./Vector";
 import { Havoc } from "@/game/objects/ships/Havoc";
 import { Timer } from "./Timer";
+import { Ship } from "@/game/objects/ships/Ship";
+import { World } from "p2";
 
 export class Game extends React.Component {
 
     private div: RefObject<HTMLDivElement>;
     private _application: Application;
+    private _world: World;
     private _scale: number = 1;
     private _screenOffset: Vector;
+    private _ships: Ship[] = [];
 
     constructor(props: any) {
         super(props);
@@ -32,18 +36,24 @@ export class Game extends React.Component {
             this._screenOffset = new Vector((window.innerWidth / 2), (window.innerHeight / 2));
 
             this._application = new Application({ background: '#141414', resizeTo: window });
+            this._world = new World({
+                gravity: [0, 0]
+            });
 
             this.div.current.appendChild(this._application.view as HTMLCanvasElement);
-
-            this._application.stage.pivot.x
             const gridGraphics = new Graphics();
 
-            const ship = new Havoc();
+            this._ships.push(new Havoc(true, new Vector(-1000, 0)));
+            this._ships.push(new Havoc(false));
             const grid = new Grid(gridGraphics);
+
+            const bodies = this._ships.forEach(s => this._world.addBody(s.body));
 
             this._application.ticker.add(() => {
                 Input.Update();
                 Timer.TIMER().update();
+
+                this._world.step(1 / 60);
 
                 if (Input.IsKeyDown(Keys.NumpadPlus)) {
                     this.updateScale(-0.01);
@@ -53,21 +63,18 @@ export class Game extends React.Component {
                     this.updateScale(0.01);
                 }
 
-                grid.drawGrid(ship.position);
+                grid.drawGrid(this._ships[0].position);
 
-                ship.update();
-                ship.draw();
+                this._ships.forEach(s => s.update());
+                this._ships.forEach(s => s.draw());
 
-                this._application.stage.pivot = new Vector(ship.position.x - this._screenOffset.x, ship.position.y - this._screenOffset.y);
+                this._application.stage.pivot = new Vector(this._ships[0].position.x - this._screenOffset.x, this._ships[0].position.y - this._screenOffset.y);
             });
 
 
             const container = new Container();
             container.addChild(gridGraphics);
-            container.addChild(ship.container);
-
-
-
+            container.addChild(...this._ships.map(s => s.container));
 
             //this._application.stage.addChild(gridGraphics);
             //this._application.stage.addChild(ship.container);

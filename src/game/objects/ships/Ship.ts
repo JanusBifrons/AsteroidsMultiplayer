@@ -4,6 +4,7 @@ import { Keys } from "../../../components/Keys";
 import { Vector } from "../../../components/Vector";
 import { ShipComponent } from "../components/ShipComponent";
 import { Timer } from "@/components/Timer";
+import { Body } from "p2";
 
 export class Ship {
 
@@ -13,26 +14,38 @@ export class Ship {
     private _position: Vector;
     private _rotation: number;
     private _container: Container;
+    private _body: Body;
     private _isAccellerating: boolean;
     private _accellerationTimer: number;
     private _velocity: Vector = Vector.Zero;
 
     ///
+    /// DEBUG
+    ///
+    private _isPlayer: boolean = false;
+
+    ///
     /// STATS
     ///
-    private _accelleration: number = 0.1;
+    private _accelleration: number = 100;
 
     ///
     /// PROTECTED
     ///
     protected _scale: number;
 
-    constructor() {
-        this._position = new Vector(0, 0);
+    constructor(isPlayer: boolean, position: Vector = Vector.Zero) {
+        this._isPlayer = isPlayer;
+
+        this._position = position;
         this._rotation = 0;
         this._scale = 1;
 
         this._container = new Container();
+        this._body = new Body({
+            mass: 5,
+            position: this._position.toArray()
+        });
     }
 
     ///
@@ -42,6 +55,7 @@ export class Ship {
     protected addComponent(component: ShipComponent): void {
         component.draw();
 
+        this._body.fromPolygon(component.points);
         this._container.addChild(component.graphics);
     }
 
@@ -71,31 +85,37 @@ export class Ship {
     }
 
     public update(): void {
-        if (Input.IsKeyDown(Keys.A)) {
-            this._rotation -= 0.1;
+        if (this._isPlayer) {
+            if (Input.IsKeyDown(Keys.A)) {
+                this._rotation -= 0.1;
+            }
+
+            if (Input.IsKeyDown(Keys.D)) {
+                this._rotation += 0.1;
+            }
+
+            if (Input.IsKeyDown(Keys.W)) {
+                this.accellerate();
+            }
+
+            if (Input.IsKeyDown(Keys.S)) {
+                this.decellerate();
+            }
+
+            if (Input.IsKeyDown(Keys.Q)) {
+                this._rotation -= 0.1;
+            }
+
+            if (Input.IsKeyDown(Keys.E)) {
+                this._rotation += 0.1;
+            }
         }
 
-        if (Input.IsKeyDown(Keys.D)) {
-            this._rotation += 0.1;
-        }
+        this._body.applyForce(this._velocity.toArray());
 
-        if (Input.IsKeyDown(Keys.W)) {
-            this.accellerate();
-        }
+        this._position = new Vector(this._body.position[0], this._body.position[1]);
 
-        if (Input.IsKeyDown(Keys.S)) {
-            this.decellerate();
-        }
-
-        if (Input.IsKeyDown(Keys.Q)) {
-            this._rotation -= 0.1;
-        }
-
-        if (Input.IsKeyDown(Keys.E)) {
-            this._rotation += 0.1;
-        }
-
-        this._position = this._position.add(this._velocity);
+        //this._position = this._position.add(this._velocity);
     }
 
     public draw(): void {
@@ -111,6 +131,10 @@ export class Ship {
 
     public get container(): Container {
         return this._container;
+    }
+
+    public get body(): Body {
+        return this._body;
     }
 
     public get position(): Vector {

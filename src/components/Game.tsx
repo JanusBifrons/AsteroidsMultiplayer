@@ -68,6 +68,7 @@ export class Game extends React.Component {
                 this._ships.forEach(s => s.update());
                 this._ships.forEach(s => s.draw());
 
+                this._application.stage.scale = { x: 1, y: 1 };
                 this._application.stage.pivot = new Vector(this._ships[0].position.x - this._screenOffset.x, this._ships[0].position.y - this._screenOffset.y);
             });
 

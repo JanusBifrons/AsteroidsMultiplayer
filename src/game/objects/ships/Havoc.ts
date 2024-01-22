@@ -11,7 +11,7 @@ export class Havoc extends Ship {
     constructor(isPlayer: boolean, position: Vector = Vector.Zero) {
         super(isPlayer, position);
 
-        this._scale = 0.1;
+        this._scale = 1;
 
         this.addComponent(new Debug());
 

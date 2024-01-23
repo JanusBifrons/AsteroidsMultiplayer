@@ -4,7 +4,8 @@ import { Keys } from "../../../components/Keys";
 import { Vector } from "../../../components/Vector";
 import { ShipComponent } from "../components/ShipComponent";
 import { Timer } from "@/components/Timer";
-import { Body } from "p2";
+import { Body, Convex } from "p2";
+import { Component } from "react";
 
 export class Ship {
 
@@ -15,9 +16,9 @@ export class Ship {
     private _rotation: number;
     private _container: Container;
     private _body: Body;
-    private _isAccellerating: boolean;
-    private _accellerationTimer: number;
+    private _components: ShipComponent[];
     private _velocity: Vector = Vector.Zero;
+    private _graphics: Graphics;
 
     ///
     /// DEBUG
@@ -27,7 +28,7 @@ export class Ship {
     ///
     /// STATS
     ///
-    private _accelleration: number = 100;
+    private _accelleration: number = 1;
 
     ///
     /// PROTECTED
@@ -38,14 +39,18 @@ export class Ship {
         this._isPlayer = isPlayer;
 
         this._position = position;
+        //this._rotation = 0;
         this._rotation = 0;
         this._scale = 1;
 
+        this._components = [];
         this._container = new Container();
         this._body = new Body({
             mass: 5,
             position: this._position.toArray()
         });
+
+        this._graphics = new Graphics();
     }
 
     ///
@@ -53,10 +58,36 @@ export class Ship {
     ///
 
     protected addComponent(component: ShipComponent): void {
-        component.draw();
+        //component.draw();
+        //component.updateCenterOfMass();
+
+        this._components.push(component);
 
         this._body.fromPolygon(component.points);
-        this._container.addChild(component.graphics);
+        //this._container.addChild(component.graphics);
+
+        console.log(this._body.shapes[0]);
+
+        //this._body.angularVelocity = 1;
+
+        const verts = this._body['concavePath'] as [number, number][];
+
+        this._graphics.beginFill('#FFFFFF');
+
+        for (let i = 0; i < verts.length; i++) {
+            const vert = verts[i];
+
+            if (i == 0) {
+                this._graphics.moveTo(vert[0], vert[1]);
+            }
+            else {
+                this._graphics.lineTo(vert[0], vert[1]);
+            }
+        }
+
+        this._graphics.closePath();
+
+        this._container.addChild(this._graphics);
     }
 
     ///
@@ -68,8 +99,6 @@ export class Ship {
     }
 
     public accellerate() {
-        this._isAccellerating = true;
-        this._accellerationTimer = 0;
 
         let nX: number = Math.cos(this._rotation) * (this._accelleration * (Timer.ElapsedTime));
         let nY: number = Math.sin(this._rotation) * (this._accelleration * (Timer.ElapsedTime));
@@ -87,11 +116,11 @@ export class Ship {
     public update(): void {
         if (this._isPlayer) {
             if (Input.IsKeyDown(Keys.A)) {
-                this._rotation -= 0.1;
+                this._body.angularVelocity -= 0.01;
             }
 
             if (Input.IsKeyDown(Keys.D)) {
-                this._rotation += 0.1;
+                this._body.angularVelocity += 0.01;
             }
 
             if (Input.IsKeyDown(Keys.W)) {
@@ -103,23 +132,34 @@ export class Ship {
             }
 
             if (Input.IsKeyDown(Keys.Q)) {
-                this._rotation -= 0.1;
+
             }
 
             if (Input.IsKeyDown(Keys.E)) {
-                this._rotation += 0.1;
+
             }
         }
 
         this._body.applyForce(this._velocity.toArray());
-
         this._position = new Vector(this._body.position[0], this._body.position[1]);
+        this._rotation = this._body.angle;
 
-        //this._position = this._position.add(this._velocity);
+        //console.log(this._body.);
+
+        // if (this._body.shapes[0] instanceof Convex) {
+        //     //console.log(this._body.shapes[0].body['concavePath']);
+        //     console.log(this._body['concavePath'])
+        // }
     }
 
     public draw(): void {
-        this._container.pivot = new Vector(200, 0);
+        //console.log(this._components[0].center);
+
+
+        //console.log(this._position);
+        //console.log(this._body.shapes[0].boundingRadius);
+
+        this._container.pivot = this._components[0].center;
         this._container.position = this._position;
         this._container.rotation = this._rotation;
         this._container.scale = { x: this._scale, y: this._scale };

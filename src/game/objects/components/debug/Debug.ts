@@ -3,9 +3,29 @@ import { ShipComponent } from "../ShipComponent";
 import { Vector } from "@/components/Vector";
 
 export class Debug extends ShipComponent {
-    public draw(): void {
-        super.draw();
+    public createOutline(): void {
+        // this._points.push(new Vector(-500, 500));
+        // this._points.push(new Vector(-500, -500));
+        // this._points.push(new Vector(500, -500));
 
+        // this._points.push(new Vector(-333.3333282470703, 666.6666717529297));
+        // this._points.push(new Vector(-333.3333282470703, -333.3333282470703));
+        // this._points.push(new Vector(666.6666717529297, -333.3333282470703));
+
+        // this._points.push(new Vector(-50, -50));
+        // this._points.push(new Vector(50, -50));
+        // this._points.push(new Vector(50, 50));
+        // this._points.push(new Vector(-50, 50));
+
+        // Wing
+        // this._points.push(new Vector(-50, -320));
+        // this._points.push(new Vector(0, -300));
+        // this._points.push(new Vector(200, -150));
+        // this._points.push(new Vector(300, -50));
+        // this._points.push(new Vector(300, 0));
+        // this._points.push(new Vector(0, 0));
+
+        // Cockpit
         this._points.push(new Vector(-10, 10));
         this._points.push(new Vector(-30, 20));
         this._points.push(new Vector(-50, 30));
@@ -22,64 +42,75 @@ export class Debug extends ShipComponent {
         this._points.push(new Vector(-10, -10));
         this._points.push(new Vector(0, 0));
 
-        // Main body
-        this._graphics.lineStyle(1, '#FFFFFF');
-        this._graphics.beginFill('#FFFFFF');
-        this._graphics.moveTo(-10, 10);
-        this._graphics.lineTo(-30, 20);
-        this._graphics.lineTo(-50, 30);
-        this._graphics.lineTo(-70, 40);
-        this._graphics.lineTo(-150, 40);
-        this._graphics.lineTo(-180, 60);
-        this._graphics.lineTo(-250, 80);
-        this._graphics.lineTo(-250, -80);
-        this._graphics.lineTo(-180, -60);
-        this._graphics.lineTo(-150, -40);
-        this._graphics.lineTo(-70, -40);
-        this._graphics.lineTo(-50, -30);
-        this._graphics.lineTo(-30, -20);
-        this._graphics.lineTo(-10, -10);
-        this._graphics.lineTo(0, 0);
+        // Rectangle
+        // this._points.push(new Vector(0, 0));
+        // this._points.push(new Vector(1000, 0));
+        // this._points.push(new Vector(1000, 100));
+        // this._points.push(new Vector(0, 100));
+    }
 
-        // // Tip Highlight
+    public draw(): void {
+        super.draw();
+
+        this._graphics.lineStyle(1, '#00FF00');
+        this._graphics.beginFill('#00FF00');
+
+        for (let i = 0; i < this._points.length; i++) {
+            if (i == 0) {
+                this._graphics.moveTo(this._points[i].x, this._points[i].y);
+            }
+            else {
+                this._graphics.lineTo(this._points[i].x, this._points[i].y);
+            }
+        }
+
+        this._graphics.closePath();
+
+        // this._points.push(new Vector(0, 0));
+        // this._points.push(new Vector(100, 0));
+        // this._points.push(new Vector(100, 100));
+        // this._points.push(new Vector(0, 100));
+
         // this._graphics.lineStyle(1, '#00FF00');
         // this._graphics.beginFill('#00FF00');
-        // this._graphics.lineTo(-10, -10);
-        // this._graphics.lineTo(-30, -20);
-        // this._graphics.lineTo(-50, -30);
-        // this._graphics.lineTo(-70, -40);
-        // this._graphics.lineTo(-90, -40);
-        // this._graphics.lineTo(-90, 40);
-        // this._graphics.lineTo(-70, 40);
-        // this._graphics.lineTo(-50, 30);
+        // this._graphics.moveTo(0, 0);
+        // this._graphics.lineTo(100, 0);
+        // this._graphics.lineTo(100, 100);
+        // this._graphics.lineTo(0, 100);
+        // this._graphics.closePath();
+
+        // this._points.push(new Vector(-10, 10));
+        // this._points.push(new Vector(-30, 20));
+        // this._points.push(new Vector(-50, 30));
+        // this._points.push(new Vector(-70, 40));
+        // this._points.push(new Vector(-150, 40));
+        // this._points.push(new Vector(-180, 60));
+        // this._points.push(new Vector(-250, 80));
+        // this._points.push(new Vector(-250, -80));
+        // this._points.push(new Vector(-180, -60));
+        // this._points.push(new Vector(-150, -40));
+        // this._points.push(new Vector(-70, -40));
+        // this._points.push(new Vector(-50, -30));
+        // this._points.push(new Vector(-30, -20));
+        // this._points.push(new Vector(-10, -10));
+        // this._points.push(new Vector(0, 0));
+
+        // this._graphics.lineStyle(1, '#FFFFFF');
+        // this._graphics.beginFill('#FFFFFF');
+        // this._graphics.moveTo(-10, 10);
         // this._graphics.lineTo(-30, 20);
-        // this._graphics.lineTo(-10, 10);
-        // this._graphics.closePath();
-
-        // // Tip Highlight Strip
-        // this._graphics.lineStyle(1, '#00FF00');
-        // this._graphics.beginFill('#00FF00');
-        // this._graphics.moveTo(-110, -40);
-        // this._graphics.lineTo(-110, 40);
-        // this._graphics.lineTo(-120, 40);
-        // this._graphics.lineTo(-120, -40);
-        // this._graphics.closePath();
-
-        // // Actual Cockpit
-        // this._graphics.lineStyle(1, '#000000')
-        // this._graphics.beginFill('#000000');
-        // this._graphics.drawEllipse(-170, 0, 50, 30);
-        // this._graphics.closePath();
-
-        // // Actual Cockpit Tail Strips
-        // this._graphics.lineStyle(1, '#00FF00');
-        // this._graphics.beginFill('#00FF00');
-        // this._graphics.moveTo(-250, -50);
-        // this._graphics.lineTo(-300, 0);
-        // this._graphics.lineTo(-250, 50);
-        // this._graphics.lineTo(-270, 50);
-        // this._graphics.lineTo(-350, 0);
-        // this._graphics.lineTo(-270, -50);
-        // this._graphics.closePath();
+        // this._graphics.lineTo(-50, 30);
+        // this._graphics.lineTo(-70, 40);
+        // this._graphics.lineTo(-150, 40);
+        // this._graphics.lineTo(-180, 60);
+        // this._graphics.lineTo(-250, 80);
+        // this._graphics.lineTo(-250, -80);
+        // this._graphics.lineTo(-180, -60);
+        // this._graphics.lineTo(-150, -40);
+        // this._graphics.lineTo(-70, -40);
+        // this._graphics.lineTo(-50, -30);
+        // this._graphics.lineTo(-30, -20);
+        // this._graphics.lineTo(-10, -10);
+        // this._graphics.lineTo(0, 0);
     }
 }

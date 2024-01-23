@@ -1,11 +1,7 @@
-import { Graphics } from "pixi.js";
+
+import { Debug } from "../components/debug/Debug";
 import { Ship } from "./Ship";
-import { Cockpit } from "../components/cockpit/Cockpit";
-import { Pad } from "../components/body/Pad";
 import { Vector } from "@/components/Vector";
-import { RearWing } from "../components/wing/RearWing";
-import { Wing } from "../components/wing/Wing";
-import { Debug } from "../components/debug/debug";
 
 export class Havoc extends Ship {
     constructor(isPlayer: boolean, position: Vector = Vector.Zero) {

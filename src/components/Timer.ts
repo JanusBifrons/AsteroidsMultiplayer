@@ -48,8 +48,6 @@ export class Timer {
     }
 
     static get ElapsedTime(): number {
-        console.log(Timer.TIMER().getElapsedTime());
-
         return Timer.TIMER().getElapsedTime();
     }
 }

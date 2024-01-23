@@ -43,8 +43,9 @@ export class Game extends React.Component {
             this.div.current.appendChild(this._application.view as HTMLCanvasElement);
             const gridGraphics = new Graphics();
 
-            this._ships.push(new Havoc(true, new Vector(-1000, 0)));
-            this._ships.push(new Havoc(false));
+            //this._ships.push(new Havoc(true, new Vector(0, 0)));
+            this._ships.push(new Havoc(true, new Vector(0, 100)));
+            this._ships.push(new Havoc(false, new Vector(1500, 0)));
             const grid = new Grid(gridGraphics);
 
             const bodies = this._ships.forEach(s => this._world.addBody(s.body));
@@ -53,7 +54,7 @@ export class Game extends React.Component {
                 Input.Update();
                 Timer.TIMER().update();
 
-                this._world.step(1 / 60);
+                this._world.step(1 / 60, Timer.ElapsedTime);
 
                 if (Input.IsKeyDown(Keys.NumpadPlus)) {
                     this.updateScale(-0.01);

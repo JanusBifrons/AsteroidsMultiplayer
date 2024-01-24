@@ -1,5 +1,5 @@
 
-import { Debug } from "../components/debug/Debug";
+import { Block } from "../components/blocks/Block";
 import { Ship } from "./Ship";
 import { Vector } from "@/components/Vector";
 
@@ -7,9 +7,13 @@ export class Havoc extends Ship {
     constructor(isPlayer: boolean, position: Vector = Vector.Zero) {
         super(isPlayer, position);
 
-        this._scale = 1;
-
-        this.addComponent(new Debug());
+        this.addComponent(new Block(100, 100, Vector.Zero));
+        this.addComponent(new Block(100, 100, new Vector(100, 0)));
+        this.addComponent(new Block(100, 100, new Vector(100, 100)));
+        this.addComponent(new Block(100, 100, new Vector(200, 100)));
+        this.addComponent(new Block(100, 100, new Vector(200, 200)));
+        this.addComponent(new Block(100, 100, new Vector(300, 300)));
+        this.addComponent(new Block(100, 100, new Vector(400, 400)));
 
         // this.addComponent(new RearWing(new Vector(0, 75)));
         // this.addComponent(new RearWing(new Vector(0, -75), true));

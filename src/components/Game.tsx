@@ -43,9 +43,10 @@ export class Game extends React.Component {
             this.div.current.appendChild(this._application.view as HTMLCanvasElement);
             const gridGraphics = new Graphics();
 
-            //this._ships.push(new Havoc(true, new Vector(0, 0)));
-            this._ships.push(new Havoc(true, new Vector(0, 100)));
-            this._ships.push(new Havoc(false, new Vector(1500, 0)));
+            this._ships = [];
+
+            this._ships.push(new Havoc(true, new Vector(0, 0)));
+            this._ships.push(new Havoc(false, new Vector(0, 250)));
             const grid = new Grid(gridGraphics);
 
             const bodies = this._ships.forEach(s => this._world.addBody(s.body));
@@ -64,12 +65,11 @@ export class Game extends React.Component {
                     this.updateScale(0.01);
                 }
 
-                grid.drawGrid(this._ships[0].position);
+                grid.drawGrid(new Vector(0, 0));
 
                 this._ships.forEach(s => s.update());
-                this._ships.forEach(s => s.draw());
 
-                this._application.stage.scale = { x: 1, y: 1 };
+                //this._application.stage.scale = { x: 1, y: 1 };
                 this._application.stage.pivot = new Vector(this._ships[0].position.x - this._screenOffset.x, this._ships[0].position.y - this._screenOffset.y);
             });
 
@@ -77,9 +77,6 @@ export class Game extends React.Component {
             const container = new Container();
             container.addChild(gridGraphics);
             container.addChild(...this._ships.map(s => s.container));
-
-            //this._application.stage.addChild(gridGraphics);
-            //this._application.stage.addChild(ship.container);
             this._application.stage.addChild(container);
         }
     }

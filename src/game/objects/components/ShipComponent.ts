@@ -1,7 +1,5 @@
 import { Vector } from "@/components/Vector";
-import { Offside } from "next/font/google";
-import { Convex } from "p2";
-import { Graphics } from "pixi.js";
+import { Body, Convex, Shape } from "p2";
 
 export abstract class ShipComponent {
 
@@ -9,64 +7,31 @@ export abstract class ShipComponent {
     /// PROTECTED
     ///
     protected _offset: Vector;
-    protected _mirrored: boolean;
-    protected _scale: number;
-    protected _graphics: Graphics;
-    protected _points: Vector[] = [];
-    protected _centerOfMass: Vector;
     protected _mass: number;
+    protected _shape: Shape;
 
     ///
     /// PRIVATE
     ///
 
-    constructor(offset: Vector = Vector.Zero, mirror: boolean = false, scale: number = 1) {
-        this._graphics = new Graphics();
-
-        this._centerOfMass = Vector.Zero;
+    constructor(offset: Vector = Vector.Zero, mass: number = 5) {
         this._offset = offset;
-        this._mirrored = mirror;
-        this._scale = scale;
-        this._mass = 5;
-
-        this.createOutline();
+        this._mass = mass;
     }
 
-    public updateCenterOfMass(): void {
-        let x: number = 0;
-        let y: number = 0;
-
-        for (let point of this._points) {
-            x += point.x;
-            y += point.y;
-        }
-
-        x = x / this._points.length;
-        y = y / this._points.length;
-
-        this._centerOfMass = new Vector(x, y);
-    }
-
-    public draw(): void {
-        this._graphics.position = this._offset;
-        this._graphics.scale = { x: this._scale, y: this._mirrored ? this._scale * -1 : this._scale };
-    }
-
-    public createOutline(): void { }
+    abstract createShape(): void;
 
     ///
     /// PROPERTIES
     ///
 
-    public get graphics(): Graphics {
-        return this._graphics;
+    public get offset(): Vector {
+        return this._offset;
     }
 
-    public get points(): [number, number][] {
-        return this._points.map(p => p.toArray());
-    }
+    public get shape(): Shape {
+        this.createShape();
 
-    public get center(): Vector {
-        return this._centerOfMass;
+        return this._shape;
     }
 }

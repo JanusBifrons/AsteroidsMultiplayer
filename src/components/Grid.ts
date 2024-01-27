@@ -1,19 +1,12 @@
-import { Graphics, IPointData } from "pixi.js";
+import { Vector } from "matter-js";
 
 export class Grid {
-    ///
-    /// PRIVATE
-    ///
-    private _graphics: Graphics;
 
-    constructor(graphics: Graphics) {
-        this._graphics = graphics;
+    constructor() {
+
     }
 
-    public drawGrid(offset: IPointData) {
-
-        this._graphics.clear();
-
+    public drawGrid(canvasContext: CanvasRenderingContext2D, offset: Vector) {
         let nSize: number = 5000;
         let nGridSize: number = 10;
         let nSmallGridSize: number = 10;
@@ -25,36 +18,38 @@ export class Grid {
         let nSmallX: number = 0;
         let nSmallY: number = 0;
 
+        canvasContext.strokeStyle = 'darkgray';
+
         // Draw first two lines
-        this._graphics.beginFill('#FFFFFF', 1);
-        this._graphics.lineStyle(nThick, '#FFFFFF', 1);
-        this._graphics.moveTo(nX, nY);
-        this._graphics.lineTo(nX + (nSize * nGridSize), nY);
-        this._graphics.moveTo(nX, nY);
-        this._graphics.lineTo(nX, nY + (nSize * nGridSize));
-        this._graphics.closePath();
+        canvasContext.beginPath();
+        canvasContext.lineWidth = nThick;
+        canvasContext.moveTo(nX, nY);
+        canvasContext.lineTo(nX + (nSize * nGridSize), nY);
+        canvasContext.moveTo(nX, nY);
+        canvasContext.lineTo(nX, nY + (nSize * nGridSize));
+        canvasContext.stroke();
 
         for (var i = 0; i < nGridSize; i++) {
             nSmallX = nX;
             nSmallY = nY;
 
             for (var j = 0; j < nSmallGridSize; j++) {
-                this._graphics.beginFill('#FFFFFF');
-                this._graphics.lineStyle(nThin, '#FFFFFF', 1);
-                this._graphics.moveTo(nSmallX, nSmallY);
-                this._graphics.lineTo(nSmallX + (nSize * nGridSize), nSmallY);
-                this._graphics.closePath();
+                canvasContext.beginPath();
+                canvasContext.lineWidth = nThin;
+                canvasContext.moveTo(nSmallX, nSmallY);
+                canvasContext.lineTo(nSmallX + (nSize * nGridSize), nSmallY);
+                canvasContext.stroke();
 
                 nSmallY += (nSize / nSmallGridSize);
             }
 
             nY += nSize;
 
-            this._graphics.beginFill('#FFFFFF');
-            this._graphics.lineStyle(nThick, '#FFFFFF', 1);
-            this._graphics.moveTo(nX, nY);
-            this._graphics.lineTo(nX + (nSize * nGridSize), nY);
-            this._graphics.closePath();
+            canvasContext.beginPath();
+            canvasContext.lineWidth = nThick;
+            canvasContext.moveTo(nX, nY);
+            canvasContext.lineTo(nX + (nSize * nGridSize), nY);
+            canvasContext.stroke();
         }
 
         nX = (Math.round(offset.x / nSize) * nSize) - (nSize * (nGridSize / 2));
@@ -65,22 +60,22 @@ export class Grid {
             nSmallY = nY;
 
             for (var j = 0; j < nSmallGridSize; j++) {
-                this._graphics.beginFill('#FFFFFF');
-                this._graphics.lineStyle(nThin, '#FFFFFF', 1);
-                this._graphics.moveTo(nSmallX, nSmallY);
-                this._graphics.lineTo(nSmallX, nSmallY + (nSize * nGridSize));
-                this._graphics.closePath();
+                canvasContext.beginPath();
+                canvasContext.lineWidth = nThin;
+                canvasContext.moveTo(nSmallX, nSmallY);
+                canvasContext.lineTo(nSmallX, nSmallY + (nSize * nGridSize));
+                canvasContext.stroke();
 
                 nSmallX += (nSize / nSmallGridSize);
             }
 
             nX += nSize;
 
-            this._graphics.beginFill('#FFFFFF');
-            this._graphics.lineStyle(nThick, '#FFFFFF', 1);
-            this._graphics.moveTo(nX, nY);
-            this._graphics.lineTo(nX, nY + (nSize * nGridSize));
-            this._graphics.closePath();
+            canvasContext.beginPath();
+            canvasContext.lineWidth = nThick;
+            canvasContext.moveTo(nX, nY);
+            canvasContext.lineTo(nX, nY + (nSize * nGridSize));
+            canvasContext.stroke();
         }
     }
 }

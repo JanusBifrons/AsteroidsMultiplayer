@@ -1,22 +1,13 @@
 import { Vector } from "@/components/Vector";
 import { ShipComponent } from "../ShipComponent";
-import { Box, Convex } from "p2";
+import { Bodies } from "matter-js";
 
 export class Block extends ShipComponent {
-    private _width: number;
-    private _height: number;
-
-    constructor(width: number, height: number, offset: Vector, mass: number = 5) {
-        super(offset, mass);
-
-        this._width = width;
-        this._height = height;
+    constructor(public width: number, public height: number, offset: Vector) {
+        super(offset);
     }
 
-    public createShape(): void {
-        this._shape = new Box({
-            width: this._width,
-            height: this._height
-        });
+    public createBody(): void {
+        this._body = Bodies.rectangle(0, 0, this.width, this.height);
     }
 }

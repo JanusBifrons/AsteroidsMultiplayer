@@ -1,24 +1,15 @@
 'use client'
 
-import { Application, Container, Graphics } from "pixi.js";
 import React, { RefObject } from "react";
 import { ReactNode } from "react";
-import { Input } from "./Input";
-import { Keys } from "./Keys";
-import { Grid } from "./Grid";
-import { Vector } from "./Vector";
-import { Havoc } from "@/game/objects/ships/Havoc";
-import { Timer } from "./Timer";
 import { Ship } from "@/game/objects/ships/Ship";
-import { LinearSpring, World } from "p2";
+import Matter, { Body, Bounds, Events, Mouse, MouseConstraint, Vector } from 'matter-js';
+import { Input } from "./Input";
 
 export class Game extends React.Component {
 
     private div: RefObject<HTMLDivElement>;
-    private _application: Application;
-    private _world: World;
     private _scale: number = 1;
-    private _screenOffset: Vector;
     private _ships: Ship[] = [];
 
     constructor(props: any) {
@@ -30,69 +21,96 @@ export class Game extends React.Component {
     }
 
     componentDidMount(): void {
-        if (!this._application) {
-            Timer.Init();
+        // module aliases
+        const Engine = Matter.Engine,
+            Render = Matter.Render,
+            Runner = Matter.Runner,
+            Bodies = Matter.Bodies,
+            Composite = Matter.Composite;
 
-            this._screenOffset = new Vector((window.innerWidth / 2), (window.innerHeight / 2));
+        // create an engine
+        var engine = Engine.create();
 
-            this._application = new Application({ background: '#141414', resizeTo: window });
-            this._world = new World({
-                gravity: [0, 0]
-            });
+        // create a renderer
+        var render = Render.create({
+            element: this.div.current,
+            engine: engine,
+            options: {
+                width: document.body.clientWidth,
+                height: document.body.clientHeight
+            }
+        });
 
-            this.div.current.appendChild(this._application.view as HTMLCanvasElement);
-            const gridGraphics = new Graphics();
+        // create two boxes and a ground
+        //var boxA = Bodies.rectangle(0, 0, 80, 80);
+        //var boxB = Bodies.rectangle(400, 50, 80, 80);
+        //var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
-            this._ships = [];
+        // add all of the bodies to the world
+        //Composite.add(engine.world);
 
-            this._ships.push(new Havoc(true, new Vector(0, 0)));
-            this._ships.push(new Havoc(false, new Vector(0, 250)));
-            const grid = new Grid(gridGraphics);
+        engine.gravity.y = 0;
+        engine.gravity.x = 0;
 
-            this._ships.forEach(s => this._world.addBody(s.body));
+        // run the renderer
+        Render.run(render);
 
-            const spring = new LinearSpring(this._ships[0].body, this._ships[1].body, {
-                stiffness: 1000,
-                damping: 10,
-                restLength: 1000
-            });
-
-            this._world.addSpring(spring);
-
-            this._application.ticker.add(() => {
-                Input.Update();
-                Timer.TIMER().update();
-
-                this._world.step(1 / 60, Timer.ElapsedTime);
-
-                if (Input.IsKeyDown(Keys.NumpadPlus)) {
-                    this.updateScale(-0.01);
-                }
-
-                if (Input.IsKeyDown(Keys.NumpadMinus)) {
-                    this.updateScale(0.01);
-                }
-
-                grid.drawGrid(new Vector(0, 0));
-
-                this._ships.forEach(s => s.update());
-
-                //this._application.stage.scale = { x: 1, y: 1 };
-                this._application.stage.pivot = new Vector(this._ships[0].position.x - this._screenOffset.x, this._ships[0].position.y - this._screenOffset.y);
-            });
+        // create runner
+        var runner = Runner.create();
 
 
+        // run the engine
+        Runner.run(runner, engine);
 
+        const objects: Body[] = [];
 
-            // Only need to draw once
-            this._ships.forEach(s => s.draw());
-
-
-            const container = new Container();
-            container.addChild(gridGraphics);
-            container.addChild(...this._ships.map(s => s.container));
-            this._application.stage.addChild(container);
+        for (let i = 0; i < 50; i++) {
+            objects.push(Bodies.rectangle(Math.random() * 1000, Math.random() * 1000, 80, 80));
         }
+
+        Composite.add(engine.world, objects);
+
+        const ship = new Ship(true, Vector.create(0, 0));
+        Composite.add(engine.world, [ship.body]);
+
+        Events.on(runner, 'beforeUpdate', () => {
+            Input.Update();
+
+            ship.update();
+        });
+
+        // create limits for the viewport
+        var extents = {
+            min: { x: -300, y: -300 },
+            max: { x: 1100, y: 900 }
+        };
+
+        // keep track of current bounds scale (view zoom)
+        var boundsScaleTarget = 1,
+            boundsScale = {
+                x: 1,
+                y: 1
+            };
+
+        // add mouse control
+        var mouse = Mouse.create(render.canvas),
+            mouseConstraint = MouseConstraint.create(engine, {
+                mouse: mouse,
+                constraint: {
+                    stiffness: 0.2,
+                    render: {
+                        visible: false
+                    }
+                }
+            });
+
+        Composite.add(engine.world, mouseConstraint);
+
+        Events.on(render, 'beforeRender', () => {
+            Render.lookAt(render, ship.body, Vector.create(window.innerWidth, window.innerHeight));
+        });
+
+
     }
 
     ///
@@ -109,7 +127,7 @@ export class Game extends React.Component {
 
     public render(): ReactNode {
         return (
-            <div ref={this.div}>
+            <div ref={this.div} className="flex">
             </div>
         );
     }

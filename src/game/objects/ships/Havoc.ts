@@ -7,7 +7,7 @@ export class Havoc extends Ship {
     constructor(isPlayer: boolean, position: Vector = Vector.Zero) {
         super(isPlayer, position);
 
-        this.addComponent(new Block(100, 100, Vector.Zero));
-        this.addComponent(new Block(100, 100, new Vector(100, 0)));
+        this.addComponent(new Block(1000, 100, Vector.Zero));
+        //this.addComponent(new Block(100, 100, new Vector(100, 0)));
     }
 }

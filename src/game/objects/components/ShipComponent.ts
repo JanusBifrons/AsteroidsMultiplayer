@@ -1,5 +1,5 @@
 import { Vector } from "@/components/Vector";
-import { Body, Convex, Shape } from "p2";
+import Matter from "matter-js";
 
 export abstract class ShipComponent {
 
@@ -7,19 +7,19 @@ export abstract class ShipComponent {
     /// PROTECTED
     ///
     protected _offset: Vector;
-    protected _mass: number;
-    protected _shape: Shape;
+    protected _body: Matter.Body;
 
     ///
     /// PRIVATE
     ///
 
-    constructor(offset: Vector = Vector.Zero, mass: number = 5) {
+    constructor(offset: Vector = Vector.Zero) {
         this._offset = offset;
-        this._mass = mass;
+
+        this.createBody();
     }
 
-    abstract createShape(): void;
+    abstract createBody(): void;
 
     ///
     /// PROPERTIES
@@ -29,9 +29,7 @@ export abstract class ShipComponent {
         return this._offset;
     }
 
-    public get shape(): Shape {
-        this.createShape();
-
-        return this._shape;
+    public get body(): Matter.Body {
+        return this._body;
     }
 }

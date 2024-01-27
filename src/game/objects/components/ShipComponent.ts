@@ -13,10 +13,7 @@ export abstract class ShipComponent {
     /// PRIVATE
     ///
 
-    constructor(offset: Vector = Vector.Zero) {
-        this._offset = offset;
-
-        this.createBody();
+    constructor() {
     }
 
     abstract createBody(): void;
@@ -30,6 +27,8 @@ export abstract class ShipComponent {
     }
 
     public get body(): Matter.Body {
+        this.createBody();
+
         return this._body;
     }
 }

@@ -5,6 +5,8 @@ import { ReactNode } from "react";
 import { Ship } from "@/game/objects/ships/Ship";
 import Matter, { Body, Bounds, Events, Mouse, MouseConstraint, Vector } from 'matter-js';
 import { Input } from "./Input";
+import { Havoc } from "@/game/objects/ships/Havoc";
+import { Captial } from "@/game/objects/ships/Capital";
 
 export class Game extends React.Component {
 
@@ -37,7 +39,13 @@ export class Game extends React.Component {
             engine: engine,
             options: {
                 width: document.body.clientWidth,
-                height: document.body.clientHeight
+                height: document.body.clientHeight,
+                showAxes: true,
+                showBounds: true,
+                showCollisions: true,
+                showVelocity: true,
+                showDebug: true,
+                showConvexHulls: true,
             }
         });
 
@@ -64,33 +72,23 @@ export class Game extends React.Component {
 
         const objects: Body[] = [];
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 500; i++) {
             objects.push(Bodies.rectangle(Math.random() * 1000, Math.random() * 1000, 80, 80));
         }
 
         Composite.add(engine.world, objects);
 
-        const ship = new Ship(true, Vector.create(0, 0));
-        Composite.add(engine.world, [ship.body]);
+        const ship = new Havoc(true, Vector.create(-500, 500));
+        const capita = new Captial(false, Vector.create(-5000, -5000));
+
+
+        Composite.add(engine.world, [ship.body, capita.body]);
 
         Events.on(runner, 'beforeUpdate', () => {
             Input.Update();
 
             ship.update();
         });
-
-        // create limits for the viewport
-        var extents = {
-            min: { x: -300, y: -300 },
-            max: { x: 1100, y: 900 }
-        };
-
-        // keep track of current bounds scale (view zoom)
-        var boundsScaleTarget = 1,
-            boundsScale = {
-                x: 1,
-                y: 1
-            };
 
         // add mouse control
         var mouse = Mouse.create(render.canvas),
@@ -104,13 +102,9 @@ export class Game extends React.Component {
                 }
             });
 
-        Composite.add(engine.world, mouseConstraint);
-
         Events.on(render, 'beforeRender', () => {
             Render.lookAt(render, ship.body, Vector.create(window.innerWidth, window.innerHeight));
         });
-
-
     }
 
     ///

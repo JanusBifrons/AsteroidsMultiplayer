@@ -10,7 +10,7 @@ import { Vector } from "./Vector";
 import { Havoc } from "@/game/objects/ships/Havoc";
 import { Timer } from "./Timer";
 import { Ship } from "@/game/objects/ships/Ship";
-import { World } from "p2";
+import { LinearSpring, World } from "p2";
 
 export class Game extends React.Component {
 
@@ -49,7 +49,15 @@ export class Game extends React.Component {
             this._ships.push(new Havoc(false, new Vector(0, 250)));
             const grid = new Grid(gridGraphics);
 
-            const bodies = this._ships.forEach(s => this._world.addBody(s.body));
+            this._ships.forEach(s => this._world.addBody(s.body));
+
+            const spring = new LinearSpring(this._ships[0].body, this._ships[1].body, {
+                stiffness: 1000,
+                damping: 10,
+                restLength: 1000
+            });
+
+            this._world.addSpring(spring);
 
             this._application.ticker.add(() => {
                 Input.Update();
@@ -72,6 +80,12 @@ export class Game extends React.Component {
                 //this._application.stage.scale = { x: 1, y: 1 };
                 this._application.stage.pivot = new Vector(this._ships[0].position.x - this._screenOffset.x, this._ships[0].position.y - this._screenOffset.y);
             });
+
+
+
+
+            // Only need to draw once
+            this._ships.forEach(s => s.draw());
 
 
             const container = new Container();

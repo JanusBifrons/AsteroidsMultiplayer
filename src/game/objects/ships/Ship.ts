@@ -17,7 +17,6 @@ export class Ship {
     private _rotation: number;
     private _container: Container;
     private _body: Body;
-    private _components: ShipComponent[];
     private _velocity: Vector = Vector.Zero;
     private _graphics: Graphics;
 
@@ -44,7 +43,6 @@ export class Ship {
         this._rotation = 0;
         this._scale = 1;
 
-        this._components = [];
         this._container = new Container();
         this._body = new Body({
             mass: 5,
@@ -59,63 +57,7 @@ export class Ship {
     ///
 
     protected addComponent(component: ShipComponent): void {
-        this._components.push(component);
-
-        //console.log(component.);
-
-        //this._body.fromPolygon(component.verts);
-
-
-        console.log(this._body.shapes);
-
         this._body.addShape(component.shape, component.offset.toArray());
-        //this._body.mass = this._body.mass + component.mass;
-
-        //console.log(this._body['concavePath']);
-
-        for (const shape of this._body.shapes) {
-            if (shape instanceof Box) {
-                this._graphics.beginFill(Colour.Random);
-                this._graphics.lineStyle(5, Colour.Random);
-
-                for (let i = 0; i < shape.vertices.length; i++) {
-                    const vert = shape.vertices[i];
-
-                    if (i == 0) {
-                        this._graphics.moveTo(vert[0] + shape.position[0], vert[1] + shape.position[1]);
-                    }
-                    else {
-                        this._graphics.lineTo(vert[0] + shape.position[0], vert[1] + shape.position[1]);
-                    }
-                }
-
-                this._graphics.closePath();
-            }
-        }
-
-        // const verts = this._body['concavePath'] as [number, number][];
-
-
-
-        // const verts = this._body['concavePath'] as [number, number][];
-
-        // this._graphics.beginFill(Colour.Random);
-        // this._graphics.lineStyle(5, Colour.Random);
-
-        // for (let i = 0; i < verts.length; i++) {
-        //     const vert = verts[i];
-
-        //     if (i == 0) {
-        //         this._graphics.moveTo(vert[0], vert[1]);
-        //     }
-        //     else {
-        //         this._graphics.lineTo(vert[0], vert[1]);
-        //     }
-        // }
-
-        // this._graphics.closePath();
-
-        this._container.addChild(this._graphics);
     }
 
     ///
@@ -174,6 +116,34 @@ export class Ship {
 
         this._container.position = this._position;
         this._container.rotation = this._rotation;
+    }
+
+    public draw(): void {
+        this._body.adjustCenterOfMass();
+
+        this._graphics.clear();
+
+        for (const shape of this._body.shapes) {
+            if (shape instanceof Box || shape instanceof Convex) {
+                this._graphics.beginFill(Colour.Random);
+                this._graphics.lineStyle(5, Colour.Random);
+
+                for (let i = 0; i < shape.vertices.length; i++) {
+                    const vert = shape.vertices[i];
+
+                    if (i == 0) {
+                        this._graphics.moveTo(vert[0] + shape.position[0], vert[1] + shape.position[1]);
+                    }
+                    else {
+                        this._graphics.lineTo(vert[0] + shape.position[0], vert[1] + shape.position[1]);
+                    }
+                }
+
+                this._graphics.closePath();
+            }
+        }
+
+        this._container.addChild(this._graphics);
     }
 
     ///

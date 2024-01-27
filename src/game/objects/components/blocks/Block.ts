@@ -16,8 +16,7 @@ export class Block extends ShipComponent {
     public createShape(): void {
         this._shape = new Box({
             width: this._width,
-            height: this._height,
-
+            height: this._height
         });
     }
 }

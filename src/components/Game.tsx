@@ -2,117 +2,102 @@
 
 import React, { RefObject } from "react";
 import { ReactNode } from "react";
-import { Ship } from "@/game/objects/ships/Ship";
-import Matter, { Body, Bounds, Events, Mouse, MouseConstraint, Vector } from 'matter-js';
+import { Composite, Engine, Events, Render, Runner, Vector, World } from 'matter-js';
 import { Input } from "./Input";
+import { GameObject } from "@/game/objects/GameObject";
 import { Havoc } from "@/game/objects/ships/Havoc";
-import { Captial } from "@/game/objects/ships/Capital";
+import { Player } from "@/game/Player";
 
 export class Game extends React.Component {
-
-    private div: RefObject<HTMLDivElement>;
-    private _scale: number = 1;
-    private _ships: Ship[] = [];
-
-    constructor(props: any) {
-        super(props);
-
-        this.div = React.createRef();
-
-        this.updateScale();
-    }
-
-    componentDidMount(): void {
-        // module aliases
-        const Engine = Matter.Engine,
-            Render = Matter.Render,
-            Runner = Matter.Runner,
-            Bodies = Matter.Bodies,
-            Composite = Matter.Composite;
-
-        // create an engine
-        var engine = Engine.create();
-
-        // create a renderer
-        var render = Render.create({
-            element: this.div.current,
-            engine: engine,
-            options: {
-                width: document.body.clientWidth,
-                height: document.body.clientHeight,
-                showAxes: true,
-                showBounds: true,
-                showCollisions: true,
-                showVelocity: true,
-                showDebug: true,
-                showConvexHulls: true,
-            }
-        });
-
-        // create two boxes and a ground
-        //var boxA = Bodies.rectangle(0, 0, 80, 80);
-        //var boxB = Bodies.rectangle(400, 50, 80, 80);
-        //var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
-
-        // add all of the bodies to the world
-        //Composite.add(engine.world);
-
-        engine.gravity.y = 0;
-        engine.gravity.x = 0;
-
-        // run the renderer
-        Render.run(render);
-
-        // create runner
-        var runner = Runner.create();
-
-
-        // run the engine
-        Runner.run(runner, engine);
-
-        const objects: Body[] = [];
-
-        for (let i = 0; i < 500; i++) {
-            objects.push(Bodies.rectangle(Math.random() * 1000, Math.random() * 1000, 80, 80));
-        }
-
-        Composite.add(engine.world, objects);
-
-        const ship = new Havoc(true, Vector.create(-500, 500));
-        const capita = new Captial(false, Vector.create(-5000, -5000));
-
-
-        Composite.add(engine.world, [ship.body, capita.body]);
-
-        Events.on(runner, 'beforeUpdate', () => {
-            Input.Update();
-
-            ship.update();
-        });
-
-        // add mouse control
-        var mouse = Mouse.create(render.canvas),
-            mouseConstraint = MouseConstraint.create(engine, {
-                mouse: mouse,
-                constraint: {
-                    stiffness: 0.2,
-                    render: {
-                        visible: false
-                    }
-                }
-            });
-
-        Events.on(render, 'beforeRender', () => {
-            Render.lookAt(render, ship.body, Vector.create(window.innerWidth, window.innerHeight));
-        });
-    }
 
     ///
     /// PRIVATE
     ///
+    private _div: RefObject<HTMLDivElement>;
+    private _player: Player;
 
-    private updateScale(change: number = 0): void {
-        this._scale += change;
+    ///
+    /// MATTER 
+    ///
+    private _engine: Engine;
+    private _world: World;
+    private _runner: Runner;
+    private _render: Render;
+
+    constructor(props: any) {
+        super(props);
+
+        this._div = React.createRef();
+    }
+
+    public componentDidMount(): void {
+        this.createWorld();
+
+        this._player = new Player(new Havoc(Vector.create(0, 0)));
+
+        this.addGameObject(this._player.ship);
+    }
+
+    public addGameObject(gameObject: GameObject): void {
+        Composite.add(this._engine.world, [gameObject.body]);
+    }
+
+    private createWorld(): void {
+        // create an engine
+        this._engine = Engine.create();
+
+        // create a renderer
+        this._render = Render.create({
+            element: this._div.current,
+            engine: this._engine,
+            options: {
+                width: document.body.clientWidth,
+                height: document.body.clientHeight,
+                //showAxes: true,
+                showBounds: true,
+                showCollisions: true,
+                showVelocity: true,
+                showDebug: true,
+            },
+        });
+
+        // Keep direct ref to world
+        this._world = this._engine.world;
+
+        // Disable gravity
+        this._engine.gravity.x = 0;
+        this._engine.gravity.y = 0;
+
+        // Begin the renderer
+        Render.run(this._render);
+
+        // Create the game runner
+        this._runner = Runner.create();
+
+        // Start the engine
+        Runner.run(this._runner, this._engine);
+
+        // Attach event handlers
+        Events.on(this._runner, 'beforeUpdate', this.onBeforeUpdate.bind(this));
+        Events.on(this._render, 'beforeRender', this.onBeforeRender.bind(this));
+    }
+
+    ///
+    /// EVENT HANDLERS
+    ///
+
+    public onBeforeRender(): void {
+        console.log(this._world);
+
+        if (this._world?.bodies?.length > 0) {
+            Render.lookAt(this._render, this._world.bodies[0], Vector.create(window.innerWidth, window.innerHeight), true);
+        }
+    }
+
+    public onBeforeUpdate(): void {
+        Input.Update();
+
+        this._player.update();
     }
 
     ///
@@ -121,7 +106,7 @@ export class Game extends React.Component {
 
     public render(): ReactNode {
         return (
-            <div ref={this.div} className="flex">
+            <div ref={this._div} className="flex">
             </div>
         );
     }

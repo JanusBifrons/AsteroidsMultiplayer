@@ -1,7 +1,7 @@
 import { Bodies, Vector } from "matter-js";
-import { ShipComponent } from "../ShipComponent";
+import { Component } from "../Component";
 
-export class RearWing extends ShipComponent {
+export class RearWing extends Component {
     public createBody(): void {
         const verts: Vector[] = [];
         verts.push(Vector.create(-120, 0));

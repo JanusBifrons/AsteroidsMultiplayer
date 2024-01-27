@@ -1,12 +1,10 @@
-import { ShipComponent } from "../ShipComponent";
+import { Component } from "../Component";
 import { Bodies, Vector } from "matter-js";
 
-export class Block extends ShipComponent {
-    constructor(public position: Vector, public width: number, public height: number) {
-        super();
-    }
+export class Block extends Component {
+    constructor(position: Vector, public width: number, public height: number) {
+        super(position);
 
-    public createBody(): void {
-        this._body = Bodies.rectangle(this.position.x, this.position.y, this.width, this.height);
+        this.addPart(Bodies.rectangle(this.position.x, this.position.y, this.width, this.height));
     }
 }

@@ -1,8 +1,9 @@
 import { Bodies, Vector } from "matter-js";
-import { ShipComponent } from "../ShipComponent";
+import { Component } from "../Component";
 
-export class Wing extends ShipComponent {
-    public createBody(): void {
+export class Wing extends Component {
+    constructor(position: Vector, mirror: boolean = false) {
+        super(position);
 
         const verts: Vector[] = [];
 
@@ -13,7 +14,11 @@ export class Wing extends ShipComponent {
         verts.push(Vector.create(300, 0));
         verts.push(Vector.create(0, 0));
 
-        this._body = Bodies.fromVertices(0, 0, [verts], {
-        });
+        if (!mirror) {
+            this.addPart(Bodies.fromVertices(position.x, position.y, [verts]));
+        }
+        else {
+            this.addPart(Bodies.fromVertices(position.x, position.y, [verts.map((v => Vector.create(v.x, -v.y)))]));
+        }
     }
 }

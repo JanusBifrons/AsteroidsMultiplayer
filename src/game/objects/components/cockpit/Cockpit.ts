@@ -1,12 +1,10 @@
-import { ShipComponent } from "../ShipComponent";
+import { Component } from "../Component";
 import { Bodies, Composite, Composites, Vector, Vertices } from "matter-js";
 
-export class Cockpit extends ShipComponent {
-    constructor() {
-        super();
-    }
+export class Cockpit extends Component {
+    constructor(position: Vector) {
+        super(position);
 
-    public createBody(): void {
         const verts: Vector[] = [];
         verts.push(Vector.create(-10, 10));
         verts.push(Vector.create(-30, 20));
@@ -24,8 +22,6 @@ export class Cockpit extends ShipComponent {
         verts.push(Vector.create(-10, -10));
         verts.push(Vector.create(0, 0));
 
-        this._body = Bodies.fromVertices(0, 0, [verts], {
-
-        });
+        this.addPart(Bodies.fromVertices(position.x, position.y, [verts]));
     }
 }

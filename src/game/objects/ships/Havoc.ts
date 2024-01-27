@@ -4,17 +4,23 @@ import { Block } from "../components/blocks/Block";
 import { Ship } from "./Ship";
 import { Cockpit } from "../components/cockpit/Cockpit";
 import { Wing } from "../components/wings/Wing";
+import { ShipStats } from "./ShipStats";
 
 export class Havoc extends Ship {
-    constructor(isPlayer: boolean, spawnPosition: Vector) {
-        super(isPlayer, spawnPosition);
+    constructor(position: Vector) {
+        super(position, Havoc.Stats());
 
-        //this.addComponent(new Cockpit());
+        this.addGameObject(new Cockpit(Vector.create(0, 0)));
+        this.addGameObject(new Wing(Vector.create(-100, -59)));
+        this.addGameObject(new Wing(Vector.create(-100, 59), true));
+    }
 
-        //this.addComponent(new Wing());
+    public static Stats(): ShipStats {
+        const stats = new ShipStats();
 
-        //this.addComponent(new Block(1000, 100));
-        //this.addComponent(new Block(100, 1000));
-        this.addComponent(new Block(spawnPosition, 150, 100));
+        stats.accelleration = 1;
+        stats.torque = 0.001;
+
+        return stats;
     }
 }

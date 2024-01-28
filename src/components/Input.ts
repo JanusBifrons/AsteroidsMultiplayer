@@ -9,10 +9,10 @@ export class Input {
 
     static SINGLETON: Input;
     static INPUT(): Input {
-        if(!Input.SINGLETON){
+        if (!Input.SINGLETON) {
             Input.SINGLETON = new Input();
         }
-        
+
         return Input.SINGLETON;
     }
 
@@ -41,7 +41,7 @@ export class Input {
     ///
 
     public update() {
-        if(!this._bUpdated) {
+        if (!this._bUpdated) {
             this._liKeysDownPrev = this._liKeysDown;
 
             this._bUpdated = true;
@@ -49,7 +49,7 @@ export class Input {
     }
 
     public isKeyDown(eKey: Keys): boolean {
-        if(this._liKeysDown.indexOf(eKey) != -1) {
+        if (this._liKeysDown.indexOf(eKey) != -1) {
             return true;
         }
 
@@ -57,8 +57,8 @@ export class Input {
     }
 
     public isKeyPressed(eKey: Keys): boolean {
-        if(this._liKeysDown.indexOf(eKey) != -1)
-            if(this._liKeysDownPrev.indexOf(eKey) == -1)
+        if (this._liKeysDown.indexOf(eKey) != -1)
+            if (this._liKeysDownPrev.indexOf(eKey) == -1)
                 return true;
 
         return false;
@@ -95,7 +95,7 @@ export class Input {
     public onKeyDown(e: KeyboardEvent) {
         this._liKeysDownPrev = this._liKeysDown.slice(0);
 
-        if(this._liKeysDown.indexOf(e.keyCode) != -1) {
+        if (this._liKeysDown.indexOf(e.keyCode) != -1) {
             return;
         }
 
@@ -116,7 +116,7 @@ export class Input {
     /// PROPERTIES
     ///
 
-    get mousePosition(): Vector {
+    public get mousePosition(): Vector {
         return this._cMousePosition;
     }
 }

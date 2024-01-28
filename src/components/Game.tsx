@@ -35,7 +35,7 @@ export class Game extends React.Component {
         this.createWorld();
         this.createPlayer();
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             this.addGameObject(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
         }
 

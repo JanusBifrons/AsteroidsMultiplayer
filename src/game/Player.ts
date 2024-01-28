@@ -21,8 +21,13 @@ export class Player {
             this._ship.turnToStarboard();
         }
 
-        if (Input.IsKeyDown(Keys.W)) {
-            this._ship.accellerate();
+        if (!Input.IsKeyDown(Keys.Shift)) {
+            if (Input.IsKeyDown(Keys.W)) {
+                this._ship.accellerate();
+            }
+        }
+        else {
+            this._ship.afterBurn();
         }
 
         if (Input.IsKeyDown(Keys.S)) {

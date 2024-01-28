@@ -27,6 +27,13 @@ export class Ship extends GameObject {
         this.body.torque = this._stats.torque;
     }
 
+    public afterBurn(): void {
+        let x: number = Math.cos(this.body.angle) * this._stats.accelleration * 5;
+        let y: number = Math.sin(this.body.angle) * this._stats.accelleration * 5;
+
+        Body.setVelocity(this.body, Vector.add(this.body.velocity, Vector.create(x, y)));
+    }
+
     public accellerate() {
         let x: number = Math.cos(this.body.angle) * this._stats.accelleration;
         let y: number = Math.sin(this.body.angle) * this._stats.accelleration;

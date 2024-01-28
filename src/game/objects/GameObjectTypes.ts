@@ -1,4 +1,5 @@
 export enum EGameObjectType {
     Ship,
-    Component
+    Component,
+    World
 }

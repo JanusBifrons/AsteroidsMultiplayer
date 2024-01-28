@@ -5,7 +5,7 @@ export class GameObject {
     ///
     /// PRIVATE
     ///
-    private _body: Matter.Body;
+    protected _body: Matter.Body;
     private _innerBodies: Matter.Body[] = [];
     private _type: EGameObjectType;
     private _position: Vector;

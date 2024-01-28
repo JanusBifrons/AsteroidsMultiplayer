@@ -7,6 +7,7 @@ import { Input } from "./Input";
 import { GameObject } from "@/game/objects/GameObject";
 import { Havoc } from "@/game/objects/ships/Havoc";
 import { Player } from "@/game/Player";
+import { Asteroid } from "@/game/objects/world/Asteroid";
 
 export class Game extends React.Component {
 
@@ -35,7 +36,11 @@ export class Game extends React.Component {
         this.createPlayer();
 
         for (let i = 0; i < 10; i++) {
-            this.addGameObject(new Havoc(Vector.create(Math.random() * 1000, Math.random() * 1000)));
+            this.addGameObject(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
+        }
+
+        for (let i = 0; i < 1; i++) {
+            this.addGameObject(new Asteroid(Vector.create(0, 0), 1000));
         }
     }
 
@@ -44,7 +49,7 @@ export class Game extends React.Component {
     }
 
     private createPlayer(): void {
-        this._player = new Player(new Havoc(Vector.create(-100, 0)));
+        this._player = new Player(new Havoc(Vector.create(150, 0)));
 
         this.addGameObject(this._player.ship);
     }
@@ -61,11 +66,13 @@ export class Game extends React.Component {
                 width: document.body.clientWidth,
                 height: document.body.clientHeight,
                 //showAxes: true,
-                showBounds: true,
+                //showBounds: true,
                 showCollisions: true,
                 showVelocity: true,
                 showDebug: true,
-                showPositions: true
+                showInternalEdges: true,
+                showConvexHulls: true,
+                //showPositions: true,
                 //wireframes: false,
                 //wireframeBackground: 'black'
             },
@@ -98,6 +105,7 @@ export class Game extends React.Component {
 
     public onBeforeRender(): void {
         if (this._world?.bodies?.length > 0) {
+            //Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
             Render.lookAt(this._render, this._player.ship, Vector.create(3500, 3500), true);
         }
     }

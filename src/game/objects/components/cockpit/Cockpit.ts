@@ -1,5 +1,5 @@
+import { Bodies, Body, Vector } from "matter-js";
 import { Component } from "../Component";
-import { Bodies, Composite, Composites, Vector, Vertices } from "matter-js";
 
 export class Cockpit extends Component {
     constructor(position: Vector) {

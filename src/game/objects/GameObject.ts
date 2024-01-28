@@ -1,4 +1,4 @@
-import Matter, { Bodies, Body, Vector } from "matter-js";
+import Matter, { Bodies, Body, Composite, Vector } from "matter-js";
 import { EGameObjectType } from "./GameObjectTypes";
 
 export class GameObject {
@@ -6,12 +6,16 @@ export class GameObject {
     /// PRIVATE
     ///
     private _body: Matter.Body;
+    private _innerBodies: Matter.Body[] = [];
     private _type: EGameObjectType;
+    private _position: Vector;
 
     constructor(position: Vector, type: EGameObjectType) {
+        this._position = position;
+
         this._body = Body.create({
             position: position,
-            frictionAir: 0
+            frictionAir: 0,
         });
     }
 
@@ -20,12 +24,17 @@ export class GameObject {
     ///
 
     protected addPart(body: Body): void {
-        Body.setParts(this._body, [body]);
-        //this._body.parts.push(body);
+        this.addBody(body);
     }
 
-    protected addGameObject(gameObject: GameObject): void {
-        this._body.parts.push(gameObject.body);
+    ///
+    /// PRIVATE
+    ///
+
+    private addBody(body: Body): void {
+        this._innerBodies.push(body);
+
+        Body.setParts(this._body, this._innerBodies, true);
     }
 
     ///
@@ -37,7 +46,7 @@ export class GameObject {
     }
 
     public get position(): Vector {
-        return this._body.position;
+        return this._body?.position;
     }
 
     public get angle(): number {

@@ -32,14 +32,21 @@ export class Game extends React.Component {
 
     public componentDidMount(): void {
         this.createWorld();
+        this.createPlayer();
 
-        this._player = new Player(new Havoc(Vector.create(0, 0)));
-
-        this.addGameObject(this._player.ship);
+        for (let i = 0; i < 10; i++) {
+            this.addGameObject(new Havoc(Vector.create(Math.random() * 1000, Math.random() * 1000)));
+        }
     }
 
     public addGameObject(gameObject: GameObject): void {
         Composite.add(this._engine.world, [gameObject.body]);
+    }
+
+    private createPlayer(): void {
+        this._player = new Player(new Havoc(Vector.create(-100, 0)));
+
+        this.addGameObject(this._player.ship);
     }
 
     private createWorld(): void {
@@ -58,6 +65,9 @@ export class Game extends React.Component {
                 showCollisions: true,
                 showVelocity: true,
                 showDebug: true,
+                showPositions: true
+                //wireframes: false,
+                //wireframeBackground: 'black'
             },
         });
 
@@ -87,10 +97,8 @@ export class Game extends React.Component {
     ///
 
     public onBeforeRender(): void {
-        console.log(this._world);
-
         if (this._world?.bodies?.length > 0) {
-            Render.lookAt(this._render, this._world.bodies[0], Vector.create(window.innerWidth, window.innerHeight), true);
+            Render.lookAt(this._render, this._player.ship, Vector.create(3500, 3500), true);
         }
     }
 

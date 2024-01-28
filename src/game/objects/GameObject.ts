@@ -14,27 +14,28 @@ export class GameObject {
         this._position = position;
 
         this._body = Body.create({
-            position: position,
-            frictionAir: 0,
+            render: {
+                lineWidth: 10
+            }
         });
     }
 
     ///
-    /// PROTECTED
+    /// PUBLIC
     ///
 
-    protected addPart(body: Body): void {
-        this.addBody(body);
+    public setParts(parts: Body[]): void {
+        Body.setParts(this._body, parts);
+
+        Body.setPosition(this.body, this._position);
     }
 
-    ///
-    /// PRIVATE
-    ///
+    public setBody(body: Body): void {
+        Body.setParts(this._body, [
+            body
+        ]);
 
-    private addBody(body: Body): void {
-        this._innerBodies.push(body);
-
-        Body.setParts(this._body, this._innerBodies, true);
+        Body.setPosition(this.body, this._position);
     }
 
     ///

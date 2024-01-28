@@ -29,30 +29,19 @@ export class Havoc extends Ship {
 
         //this.addGameObject(new Wing(Vector.create(-100, -59)));
 
-        this._body = Block.getBody(Vector.create(0, 0), 1000, 100);
+        //this._body = Body.create({});
 
-        Body.setParts(this._body, [
-            // Block.getBody(Vector.create(-100, 0), 100, 1000),
-            // Block.getBody(Vector.create(0, 0), 1000, 100),
-            new Cockpit(Vector.create(0, 0)).body,
-            new Wing(Vector.create(-100, -59)).body,
-            new Wing(Vector.create(-100, 59), true).body
-        ])
-
-        // this._body = Body.create({
-        //     parts: [
-        //         Block.getBody(Vector.create(100, 0), 100, 100),
-        //         //Block.getBody(Vector.create(100, 0), 100, 100)
-        //     ]
-        // });
-
-        Body.setPosition(this.body, position);
+        this.setParts([
+            new Cockpit(Vector.create(100, 0)).body,
+            new Wing(Vector.create(-100, 118), true).body,
+            new Wing(Vector.create(-100, -118)).body
+        ]);
     }
 
     public static Stats(): ShipStats {
         const stats = new ShipStats();
 
-        stats.accelleration = 0.25;
+        stats.accelleration = 0.50;
         stats.torque = 50;
         //stats.torque = 1;
 

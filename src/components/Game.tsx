@@ -40,7 +40,7 @@ export class Game extends React.Component {
         }
 
         for (let i = 0; i < 1; i++) {
-            this.addGameObject(new Asteroid(Vector.create(0, 0), 1000));
+            this.addGameObject(new Asteroid(Vector.create(0, 0), 10000));
         }
     }
 

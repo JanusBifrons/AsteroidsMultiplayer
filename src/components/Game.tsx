@@ -2,7 +2,7 @@
 
 import React, { RefObject } from "react";
 import { ReactNode } from "react";
-import { Bodies, Collision, Composite, Engine, Events, IEvent, Mouse, MouseConstraint, Render, Runner, Vector, World } from 'matter-js';
+import { Bodies, Collision, Composite, Engine, Events, IEvent, IEventCollision, Mouse, MouseConstraint, Render, Runner, Vector, World, Body } from 'matter-js';
 import { Input } from "./Input";
 import { GameObject } from "@/game/objects/GameObject";
 import { Havoc } from "@/game/objects/ships/Havoc";
@@ -11,6 +11,7 @@ import { Asteroid } from "@/game/objects/world/Asteroid";
 import { Ship } from "@/game/objects/ships/Ship";
 import { Laser } from "@/game/objects/projectile/Laser";
 import { Debug } from "@/game/objects/ships/Debug";
+import { hasValue } from "@/app/util";
 
 export class Game extends React.Component {
 
@@ -19,6 +20,7 @@ export class Game extends React.Component {
     ///
     private _div: RefObject<HTMLDivElement>;
     private _player: Player;
+    private _gameObjects: GameObject[] = [];
 
     ///
     /// MATTER 
@@ -40,7 +42,7 @@ export class Game extends React.Component {
         this.attachMouse();
         this.createPlayer();
 
-        const testShip = new Havoc(Vector.create(-250, 0));
+        const testShip = new Havoc(Vector.create(250, 0));
         testShip.body.label = "Other ship";
 
         this.addShip(testShip);
@@ -59,23 +61,32 @@ export class Game extends React.Component {
 
         ship.fired.addHandler(() => {
 
-            let x: number = Math.cos(ship.angle) * 500;
-            let y: number = Math.sin(ship.angle) * 500;
+            let x: number = Math.cos(ship.angle) * 300;
+            let y: number = Math.sin(ship.angle) * 300;
 
             const position = Vector.create(ship.position.x + x, ship.position.y + y);
 
             const laser = new Laser(position, ship.angle, ship.speed);
 
             this.addGameObject(laser);
-
-            Events.on(this._engine, 'collisionStart', function (event: any) {
-                console.log(event.pairs[0]);
-            });
         });
     }
 
     public addGameObject(gameObject: GameObject): void {
+        this._gameObjects.push(gameObject);
+
         Composite.add(this._engine.world, [gameObject.body]);
+    }
+
+    public removeGameObject(gameObject: GameObject): void {
+        const index = this._gameObjects.indexOf(gameObject);
+        if (index > -1) {
+            this._gameObjects.splice(index, 1);
+        }
+
+        if (hasValue(gameObject?.body)) {
+            Composite.remove(this._engine.world, [gameObject.body]);
+        }
     }
 
     private createPlayer(): void {
@@ -124,6 +135,7 @@ export class Game extends React.Component {
                 showDebug: true,
                 showInternalEdges: true,
                 showConvexHulls: true,
+                showIds: true,
                 //showMousePosition: true,
                 //showPositions: true,
                 wireframes: false,
@@ -150,18 +162,40 @@ export class Game extends React.Component {
         // Attach event handlers
         Events.on(this._runner, 'beforeUpdate', this.onBeforeUpdate.bind(this));
         Events.on(this._render, 'beforeRender', this.onBeforeRender.bind(this));
+        Events.on(this._engine, 'collisionStart', this.onCollisionStart.bind(this));
     }
 
     ///
     /// EVENT HANDLERS
     ///
 
+    public onCollisionStart(e: IEventCollision<Engine>): void {
+        for (const collision of e.pairs) {
+            console.log(collision);
+
+            const bodyA: Body = collision.collision.parentA ? collision.collision.parentA : collision.bodyA;
+            const bodyB: Body = collision.collision.parentB ? collision.collision.parentB : collision.bodyB;
+
+            if (bodyA.label == "Laser") {
+
+
+                console.log("found it!");
+            }
+            else if (bodyB.label == "Laser") {
+                const laser = this._gameObjects.find(obj => obj.id == bodyB.id);
+
+                this.removeGameObject(laser);
+
+                console.log("found it!");
+            }
+        }
+    }
+
     public onBeforeRender(): void {
         if (this._world?.bodies?.length > 0) {
             Mouse.setOffset(this._mouse, this._player.ship.position);
 
-            //Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
-            Render.lookAt(this._render, this._player.ship, Vector.create(3500, 3500), true);
+            Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
         }
     }
 

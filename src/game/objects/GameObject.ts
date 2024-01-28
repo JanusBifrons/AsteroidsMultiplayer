@@ -35,6 +35,18 @@ export class GameObject {
     /// PRIVATE
     ///
 
+    // private getCollisionFilter(): ICollisionFilter {
+    //     switch (this._type) {
+
+    //     }
+
+
+
+    //     return {
+    //         category: this._type
+    //     };
+    // }
+
     ///
     /// PUBLIC
     ///
@@ -56,6 +68,10 @@ export class GameObject {
     ///
     /// PROPERTIES
     ///
+
+    public get id(): number {
+        return this.body.id;
+    }
 
     public get type(): EGameObjectType {
         return this._type;

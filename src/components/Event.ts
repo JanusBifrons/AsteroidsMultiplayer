@@ -12,7 +12,7 @@ export class Event {
     /// PUBLIC
     ///
 
-    public addHandler(callBack: () => void) {
+    public addHandler(callBack: (sender: any, args?: any) => void) {
         this.handlers.push(callBack);
     }
 

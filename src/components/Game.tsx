@@ -12,6 +12,9 @@ import { Ship } from "@/game/objects/ships/Ship";
 import { Laser } from "@/game/objects/projectile/Laser";
 import { Debug } from "@/game/objects/ships/Debug";
 import { hasValue } from "@/app/util";
+import { IFiredEventArgs } from "@/game/Args";
+import { Keys } from "./Keys";
+import { Scrap } from "@/game/objects/Scrap";
 
 export class Game extends React.Component {
 
@@ -21,6 +24,7 @@ export class Game extends React.Component {
     private _div: RefObject<HTMLDivElement>;
     private _player: Player;
     private _gameObjects: GameObject[] = [];
+    private _debugShip: Ship;
 
     ///
     /// MATTER 
@@ -42,10 +46,10 @@ export class Game extends React.Component {
         this.attachMouse();
         this.createPlayer();
 
-        const testShip = new Havoc(Vector.create(250, 0));
-        testShip.body.label = "Other ship";
+        this._debugShip = new Havoc(Vector.create(250, 0));
+        this._debugShip.body.label = "Debug Ship";
 
-        this.addShip(testShip);
+        this.addShip(this._debugShip);
 
         for (let i = 0; i < 1; i++) {
             //this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
@@ -59,16 +63,18 @@ export class Game extends React.Component {
     public addShip(ship: Ship): void {
         this.addGameObject(ship);
 
-        ship.fired.addHandler(() => {
+        ship.fired.addHandler((sender: Ship, args: IFiredEventArgs) => {
+            this.addGameObject(args.laser);
+        });
 
-            let x: number = Math.cos(ship.angle) * 300;
-            let y: number = Math.sin(ship.angle) * 300;
+        ship.destroyed.addHandler(() => {
+            const childComponents: Body[] = ship.body.parts.slice(1);
 
-            const position = Vector.create(ship.position.x + x, ship.position.y + y);
+            this.removeGameObject(ship);
 
-            const laser = new Laser(position, ship.angle, ship.speed);
-
-            this.addGameObject(laser);
+            for (const part of childComponents) {
+                this.addGameObject(new Scrap(part));
+            }
         });
     }
 
@@ -171,22 +177,16 @@ export class Game extends React.Component {
 
     public onCollisionStart(e: IEventCollision<Engine>): void {
         for (const collision of e.pairs) {
-            console.log(collision);
-
             const bodyA: Body = collision.collision.parentA ? collision.collision.parentA : collision.bodyA;
             const bodyB: Body = collision.collision.parentB ? collision.collision.parentB : collision.bodyB;
 
             if (bodyA.label == "Laser") {
-
-
-                console.log("found it!");
+                const laser = this._gameObjects.find(obj => obj.id == bodyB.id);
+                this.removeGameObject(laser);
             }
             else if (bodyB.label == "Laser") {
                 const laser = this._gameObjects.find(obj => obj.id == bodyB.id);
-
                 this.removeGameObject(laser);
-
-                console.log("found it!");
             }
         }
     }
@@ -203,6 +203,10 @@ export class Game extends React.Component {
         Input.Update();
 
         this._player.update();
+
+        if (Input.IsKeyDown(Keys.Delete)) {
+            this._debugShip.destroy();
+        }
     }
 
     ///

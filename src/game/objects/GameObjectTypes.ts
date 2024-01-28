@@ -1,5 +1,7 @@
 export enum EGameObjectType {
-    Ship,
-    Component,
-    World
+    All = 0x0001,
+    Ship = 0x0002,
+    Component = 0x0003,
+    World = 0x0004,
+    Projectile = 0x0005
 }

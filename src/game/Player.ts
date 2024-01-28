@@ -6,10 +6,13 @@ export class Player {
     ///
     /// PRIVATE
     ///
-    private _ship;
+    private _ship: Ship;
+    private _hasFired: boolean = false;
 
     constructor(ship: Ship) {
         this._ship = ship;
+
+        this._ship.body.label = "Players ship";
     }
 
     public update(): void {
@@ -40,6 +43,18 @@ export class Player {
 
         if (Input.IsKeyDown(Keys.E)) {
 
+        }
+
+        if (Input.IsKeyDown(Keys.Spacebar)) {
+            if (!this._hasFired) {
+                this._ship.fire();
+
+                this._hasFired = true;
+
+                setTimeout(() => {
+                    this._hasFired = false;
+                }, 250);
+            }
         }
     }
 

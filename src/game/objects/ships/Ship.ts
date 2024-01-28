@@ -2,12 +2,18 @@ import { Body, Vector } from "matter-js";
 import { GameObject } from "../GameObject";
 import { EGameObjectType } from "../GameObjectTypes";
 import { ShipStats } from "./ShipStats";
+import { Event } from "@/components/Event";
 
 export class Ship extends GameObject {
     ///
     /// STATS
     ///
     private _stats: ShipStats;
+
+    ///
+    /// EVENTS
+    ///
+    public fired: Event = new Event();
 
     constructor(position: Vector, stats: ShipStats) {
         super(position, EGameObjectType.Ship);
@@ -18,6 +24,10 @@ export class Ship extends GameObject {
     ///
     /// PUBLIC
     ///
+
+    public fire(): void {
+        this.fired.raise(this, {});
+    }
 
     public turnToPort(): void {
         this.body.torque = -this._stats.torque;

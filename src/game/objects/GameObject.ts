@@ -1,24 +1,39 @@
-import Matter, { Bodies, Body, Composite, Vector } from "matter-js";
+import Matter, { Bodies, Body, Collision, Composite, ICollisionCallback, ICollisionFilter, Vector } from "matter-js";
 import { EGameObjectType } from "./GameObjectTypes";
 
 export class GameObject {
     ///
     /// PRIVATE
     ///
-    protected _body: Matter.Body;
-    private _innerBodies: Matter.Body[] = [];
+    private _body: Matter.Body;
     private _type: EGameObjectType;
     private _position: Vector;
 
+    ///
+    /// PROTECTED
+    ///
+    protected _strokeStyle: string;
+    protected _fillStyle: string;
+    protected _lineWidth: number = 10;
+
+
     constructor(position: Vector, type: EGameObjectType) {
         this._position = position;
+        this._type = type;
 
         this._body = Body.create({
+            frictionAir: 0,
             render: {
-                lineWidth: 10
-            }
+                lineWidth: this._lineWidth,
+                strokeStyle: this._strokeStyle,
+                fillStyle: this._fillStyle,
+            },
         });
     }
+
+    ///
+    /// PRIVATE
+    ///
 
     ///
     /// PUBLIC
@@ -56,5 +71,9 @@ export class GameObject {
 
     public get body(): Matter.Body {
         return this._body;
+    }
+
+    public get speed(): number {
+        return this._body.speed;
     }
 }

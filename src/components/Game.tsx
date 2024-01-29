@@ -125,7 +125,7 @@ export class Game extends React.Component {
     private createWorld(): void {
         // create an engine
         this._engine = Engine.create({
-            enableSleeping: false
+            enableSleeping: true
         });
 
         // create a renderer

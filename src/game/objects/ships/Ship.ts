@@ -1,4 +1,4 @@
-import { Body, Vector } from "matter-js";
+import { Body, Sleeping, Vector } from "matter-js";
 import { GameObject } from "../GameObject";
 import { EGameObjectType } from "../GameObjectTypes";
 import { ShipStats } from "./ShipStats";
@@ -52,10 +52,14 @@ export class Ship extends GameObject {
 
     public turnToPort(): void {
         this.body.torque = -this._stats.torque;
+
+        Sleeping.set(this.body, false);
     }
 
     public turnToStarboard(): void {
         this.body.torque = this._stats.torque;
+
+        Sleeping.set(this.body, false);
     }
 
     public afterBurn(): void {
@@ -63,6 +67,8 @@ export class Ship extends GameObject {
         let y: number = Math.sin(this.body.angle) * this._stats.accelleration * 5;
 
         Body.setVelocity(this.body, Vector.add(this.body.velocity, Vector.create(x, y)));
+
+        Sleeping.set(this.body, false);
     }
 
     public accellerate() {
@@ -70,6 +76,8 @@ export class Ship extends GameObject {
         let y: number = Math.sin(this.body.angle) * this._stats.accelleration;
 
         Body.setVelocity(this.body, Vector.add(this.body.velocity, Vector.create(x, y)));
+
+        Sleeping.set(this.body, false);
     }
 
     public decellerate() {
@@ -77,9 +85,13 @@ export class Ship extends GameObject {
         let y: number = Math.sin(this.body.angle) * this._stats.accelleration;
 
         Body.setVelocity(this.body, Vector.add(this.body.velocity, Vector.create(-x, -y)));
+
+        Sleeping.set(this.body, false);
     }
 
     public applyForce(force: Vector): void {
         Body.applyForce(this.body, this.body.position, force);
+
+        Sleeping.set(this.body, false);
     }
 }

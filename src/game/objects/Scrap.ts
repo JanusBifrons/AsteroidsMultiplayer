@@ -9,5 +9,7 @@ export class Scrap extends GameObject {
         Body.setPosition(body, body.position);
 
         this.setBody(body);
+
+        this.body.frictionAir = 0.001;
     }
 }

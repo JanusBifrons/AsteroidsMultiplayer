@@ -2,13 +2,15 @@ import { Vector } from "matter-js";
 import { Ship } from "./Ship";
 import { ShipStats } from "./ShipStats";
 import { Block } from "../components/blocks/Block";
+import { Wing } from "../components/wings/Wing";
 
 export class Debug extends Ship {
     constructor(position: Vector) {
         super(position, Debug.Stats());
 
         this.setParts([
-            new Block(Vector.create(100, 0), 1000, 1000).body,
+            new Wing(Vector.create(-100, 120), true).body,
+            new Wing(Vector.create(-100, -120)).body
         ]);
     }
 

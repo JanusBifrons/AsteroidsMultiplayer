@@ -6,7 +6,7 @@ export class Scrap extends GameObject {
     constructor(body: Body) {
         super(body.position, EGameObjectType.Scrap);
 
-        Body.setPosition(body, Vector.create(0, 0));
+        Body.setPosition(body, body.position);
 
         this.setBody(body);
     }

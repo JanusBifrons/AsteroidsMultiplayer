@@ -15,6 +15,7 @@ import { hasValue } from "@/app/util";
 import { IFiredEventArgs } from "@/game/Args";
 import { Keys } from "./Keys";
 import { Scrap } from "@/game/objects/Scrap";
+import { EGameObjectType } from "@/game/objects/GameObjectTypes";
 
 export class Game extends React.Component {
 
@@ -47,12 +48,13 @@ export class Game extends React.Component {
         this.createPlayer();
 
         this._debugShip = new Havoc(Vector.create(250, 0));
+        //this._debugShip = new Debug(Vector.create(250, 0));
         this._debugShip.body.label = "Debug Ship";
 
         this.addShip(this._debugShip);
 
-        for (let i = 0; i < 1; i++) {
-            //this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
+        for (let i = 0; i < 100; i++) {
+            this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
         }
 
         for (let i = 0; i < 1; i++) {
@@ -96,7 +98,7 @@ export class Game extends React.Component {
     }
 
     private createPlayer(): void {
-        this._player = new Player(new Havoc(Vector.create(150, 0)));
+        this._player = new Player(new Havoc(Vector.create(-200, 0)));
         //this._player = new Player(new Debug(Vector.create(150, 0)));
 
         this.addShip(this._player.ship);
@@ -144,7 +146,7 @@ export class Game extends React.Component {
                 showIds: true,
                 //showMousePosition: true,
                 //showPositions: true,
-                wireframes: false,
+                //wireframes: false,
                 //wireframeBackground: 'black'
             },
         });
@@ -175,19 +177,59 @@ export class Game extends React.Component {
     /// EVENT HANDLERS
     ///
 
+    public onHandleCollision(gameObjectA: GameObject, gameObjectB: GameObject): void {
+
+        if (hasValue(gameObjectA)) {
+            switch (gameObjectA.type) {
+                case EGameObjectType.Ship:
+                    if (hasValue(gameObjectB)) {
+                        if (gameObjectB.type == EGameObjectType.Projectile) {
+                            const ship = gameObjectA as Ship;
+                            ship.destroy();
+
+                            this.removeGameObject(gameObjectB);
+                        }
+                    }
+
+                    break;
+
+                case EGameObjectType.Projectile:
+                    this.removeGameObject(gameObjectA);
+                    break;
+            }
+        }
+
+
+        if (hasValue(gameObjectB)) {
+            switch (gameObjectB.type) {
+                case EGameObjectType.Ship:
+                    if (hasValue(gameObjectA)) {
+                        if (gameObjectA.type == EGameObjectType.Projectile) {
+                            const ship = gameObjectB as Ship;
+                            ship.destroy();
+
+                            this.removeGameObject(gameObjectA);
+                        }
+                    }
+                    break;
+
+                case EGameObjectType.Projectile:
+                    this.removeGameObject(gameObjectB);
+                    break;
+            }
+        }
+
+    }
+
     public onCollisionStart(e: IEventCollision<Engine>): void {
         for (const collision of e.pairs) {
             const bodyA: Body = collision.collision.parentA ? collision.collision.parentA : collision.bodyA;
             const bodyB: Body = collision.collision.parentB ? collision.collision.parentB : collision.bodyB;
 
-            if (bodyA.label == "Laser") {
-                const laser = this._gameObjects.find(obj => obj.id == bodyB.id);
-                this.removeGameObject(laser);
-            }
-            else if (bodyB.label == "Laser") {
-                const laser = this._gameObjects.find(obj => obj.id == bodyB.id);
-                this.removeGameObject(laser);
-            }
+            const gameObjectA = this._gameObjects.find(obj => obj.id == bodyA.id);
+            const gameObjectB = this._gameObjects.find(obj => obj.id == bodyB.id);
+
+            this.onHandleCollision(gameObjectA, gameObjectB);
         }
     }
 
@@ -195,7 +237,8 @@ export class Game extends React.Component {
         if (this._world?.bodies?.length > 0) {
             Mouse.setOffset(this._mouse, this._player.ship.position);
 
-            Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
+            //Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
+            Render.lookAt(this._render, this._player.ship, Vector.create(2500, 2500), true);
         }
     }
 

@@ -9,7 +9,7 @@ import { Havoc } from "@/game/objects/ships/Havoc";
 import { Player } from "@/game/Player";
 import { Asteroid } from "@/game/objects/world/Asteroid";
 import { Ship } from "@/game/objects/ships/Ship";
-import { Laser } from "@/game/objects/projectile/Laser";
+import { Laser } from "@/game/objects/projectiles/lasers/Laser";
 import { Debug } from "@/game/objects/ships/Debug";
 import { hasValue } from "@/app/util";
 import { IFiredEventArgs } from "@/game/Args";
@@ -47,14 +47,14 @@ export class Game extends React.Component {
         this.attachMouse();
         this.createPlayer();
 
-        this._debugShip = new Havoc(Vector.create(250, 0));
+        this._debugShip = new Havoc(Vector.create(350, 0));
         //this._debugShip = new Debug(Vector.create(250, 0));
         this._debugShip.body.label = "Debug Ship";
 
         this.addShip(this._debugShip);
 
         for (let i = 0; i < 100; i++) {
-            this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
+            //this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
         }
 
         for (let i = 0; i < 1; i++) {
@@ -63,10 +63,10 @@ export class Game extends React.Component {
     }
 
     public addShip(ship: Ship): void {
-        this.addGameObject(ship);
+        this.addGameObjects(ship);
 
         ship.fired.addHandler((sender: Ship, args: IFiredEventArgs) => {
-            this.addGameObject(args.laser);
+            this.addGameObjects(...args.projectiles);
         });
 
         ship.destroyed.addHandler(() => {
@@ -74,16 +74,23 @@ export class Game extends React.Component {
 
             this.removeGameObject(ship);
 
-            for (const part of childComponents) {
-                this.addGameObject(new Scrap(part));
-            }
+            this.addGameObjects(...childComponents.map(cp => new Scrap(cp)));
         });
     }
 
-    public addGameObject(gameObject: GameObject): void {
-        this._gameObjects.push(gameObject);
+    public addGameObjects(...gameObjects: GameObject[]): void {
+        // Add the objects to the array for tracking/updating
+        this._gameObjects.push(...gameObjects);
 
-        Composite.add(this._engine.world, [gameObject.body]);
+        // Extract all of the bodies so we can add them at once
+        const bodys = gameObjects.map(go => go.body);
+
+        // Add the bodies as one group for efficiency 
+        this.addBodysToWorld(bodys);
+    }
+
+    public addBodysToWorld(bodys: Body[]) {
+        Composite.add(this._engine.world, bodys);
     }
 
     public removeGameObject(gameObject: GameObject): void {
@@ -99,7 +106,7 @@ export class Game extends React.Component {
 
     private createPlayer(): void {
         this._player = new Player(new Havoc(Vector.create(-200, 0)));
-        //this._player = new Player(new Debug(Vector.create(150, 0)));
+        //this._player = new Player(new Debug(Vector.create(0, 0)));
 
         this.addShip(this._player.ship);
     }
@@ -114,7 +121,7 @@ export class Game extends React.Component {
                 render: {
                     visible: false
                 }
-            }
+            },
         });
 
         Composite.add(this._world, mouseConstraint);
@@ -143,10 +150,10 @@ export class Game extends React.Component {
                 showDebug: true,
                 showInternalEdges: true,
                 showConvexHulls: true,
-                showIds: true,
+                //showIds: true,
                 //showMousePosition: true,
                 //showPositions: true,
-                //wireframes: false,
+                wireframes: false,
                 //wireframeBackground: 'black'
             },
         });
@@ -237,8 +244,8 @@ export class Game extends React.Component {
         if (this._world?.bodies?.length > 0) {
             Mouse.setOffset(this._mouse, this._player.ship.position);
 
-            //Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
-            Render.lookAt(this._render, this._player.ship, Vector.create(2500, 2500), true);
+            Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
+            //Render.lookAt(this._render, this._player.ship, Vector.create(2500, 2500), true);
         }
     }
 

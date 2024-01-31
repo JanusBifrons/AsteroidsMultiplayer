@@ -1,4 +1,4 @@
-import { Vector } from "matter-js";
+import { Bodies, Body, Vector } from "matter-js";
 import { Ship } from "./Ship";
 import { ShipStats } from "./ShipStats";
 import { Block } from "../components/blocks/Block";
@@ -10,7 +10,7 @@ export class Debug extends Ship {
 
         this.setParts([
             new Wing(Vector.create(-100, 120), true).body,
-            new Wing(Vector.create(-100, -120)).body
+            new Wing(Vector.create(-100, -120)).body,
         ]);
     }
 

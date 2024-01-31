@@ -1,6 +1,7 @@
 import { Input } from "@/components/Input";
 import { Ship } from "./objects/ships/Ship";
 import { Keys } from "@/components/Keys";
+import { Body } from "matter-js";
 
 export class Player {
     ///

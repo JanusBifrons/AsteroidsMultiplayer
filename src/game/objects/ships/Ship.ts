@@ -3,7 +3,9 @@ import { GameObject } from "../GameObject";
 import { EGameObjectType } from "../GameObjectTypes";
 import { ShipStats } from "./ShipStats";
 import { Event } from "@/components/Event";
-import { Laser } from "../projectile/Laser";
+import { Laser } from "../projectiles/lasers/Laser";
+import { Weapon } from "../weapons/Weapon";
+import { Projectile } from "../projectiles/Projectile";
 
 export class Ship extends GameObject {
     ///
@@ -11,6 +13,11 @@ export class Ship extends GameObject {
     ///
     private _stats: ShipStats;
     private _isAlive: boolean = true;
+
+    ///
+    /// PRIVATE
+    ///
+    private _weapons: Weapon[] = [];
 
     ///
     /// EVENTS
@@ -25,8 +32,24 @@ export class Ship extends GameObject {
     }
 
     ///
+    /// PROTECTED
+    ///
+
+    protected addWeapons(weapons: Weapon[]): void {
+        weapons.forEach(w => this.addWeapon(w));
+    }
+
+    protected addWeapon(weapon: Weapon): void {
+        this._weapons.push(weapon);
+    }
+
+    ///
     /// PUBLIC
     ///
+
+    public update(): void {
+
+    }
 
     public destroy(): void {
         if (this._isAlive) {
@@ -38,16 +61,13 @@ export class Ship extends GameObject {
     }
 
     public fire(): void {
-        let x: number = Math.cos(this.angle) * 300;
-        let y: number = Math.sin(this.angle) * 300;
+        const projectiles: Projectile[] = this._weapons.map(w => w.fire()).flat();
 
-        const position = Vector.create(this.position.x + x, this.position.y + y);
-
-        const laser = new Laser(position, this.angle, this.speed);
-
-        this.fired.raise(this, {
-            laser
-        });
+        if (projectiles.length > 0) {
+            this.fired.raise(this, {
+                projectiles
+            });
+        }
     }
 
     public turnToPort(): void {

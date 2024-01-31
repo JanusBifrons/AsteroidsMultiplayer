@@ -1,10 +1,11 @@
 import { Bodies, Body, ICollisionFilter, Vector } from "matter-js";
-import { GameObject } from "../GameObject";
-import { EGameObjectType } from "../GameObjectTypes";
+import { GameObject } from "../../GameObject";
+import { EGameObjectType } from "../../GameObjectTypes";
+import { Projectile } from "../Projectile";
 
-export class Laser extends GameObject {
+export class Laser extends Projectile {
     constructor(position: Vector, angle: number, speed: number) {
-        super(position, EGameObjectType.Projectile);
+        super(position);
 
         const body = Bodies.rectangle(0, 0, 100, 10);
         Body.setAngle(body, angle);

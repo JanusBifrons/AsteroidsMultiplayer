@@ -5,4 +5,5 @@ export enum EGameObjectType {
     World = 0x0004,
     Projectile = 0x0005,
     Scrap = 0x0006,
+    Weapon = 0x0007
 }

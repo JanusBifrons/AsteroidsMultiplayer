@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { Bodies, Collision, Composite, Engine, Events, IEvent, IEventCollision, Mouse, MouseConstraint, Render, Runner, Vector, World, Body } from 'matter-js';
 import { Input } from "./Input";
 import { GameObject } from "@/game/objects/GameObject";
-import { Havoc } from "@/game/objects/ships/Havoc";
+import { Havoc } from "@/game/objects/ships/fighters/Havoc";
 import { Player } from "@/game/Player";
 import { Asteroid } from "@/game/objects/world/Asteroid";
 import { Ship } from "@/game/objects/ships/Ship";
@@ -16,6 +16,7 @@ import { IFiredEventArgs } from "@/game/Args";
 import { Keys } from "./Keys";
 import { Scrap } from "@/game/objects/Scrap";
 import { EGameObjectType } from "@/game/objects/GameObjectTypes";
+import { UI } from "@/game/ui/UI";
 
 export class Game extends React.Component {
 
@@ -26,6 +27,7 @@ export class Game extends React.Component {
     private _player: Player;
     private _gameObjects: GameObject[] = [];
     private _debugShip: Ship;
+    private _UI: UI;
 
     ///
     /// MATTER 
@@ -46,6 +48,7 @@ export class Game extends React.Component {
         this.createWorld();
         this.attachMouse();
         this.createPlayer();
+        this.createUI();
 
         this._debugShip = new Havoc(Vector.create(350, 0));
         //this._debugShip = new Debug(Vector.create(250, 0));
@@ -54,12 +57,16 @@ export class Game extends React.Component {
         this.addShip(this._debugShip);
 
         for (let i = 0; i < 100; i++) {
-            //this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
+            this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
         }
 
         for (let i = 0; i < 1; i++) {
             //this.addGameObject(new Asteroid(Vector.create(0, 0), 1000));
         }
+    }
+
+    public createUI(): void {
+        this._UI = new UI(this._render.context);
     }
 
     public addShip(ship: Ship): void {
@@ -177,7 +184,9 @@ export class Game extends React.Component {
         // Attach event handlers
         Events.on(this._runner, 'beforeUpdate', this.onBeforeUpdate.bind(this));
         Events.on(this._render, 'beforeRender', this.onBeforeRender.bind(this));
+        Events.on(this._render, 'afterRender', this.onAfterRender.bind(this));
         Events.on(this._engine, 'collisionStart', this.onCollisionStart.bind(this));
+
     }
 
     ///
@@ -244,9 +253,13 @@ export class Game extends React.Component {
         if (this._world?.bodies?.length > 0) {
             Mouse.setOffset(this._mouse, this._player.ship.position);
 
-            Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
-            //Render.lookAt(this._render, this._player.ship, Vector.create(2500, 2500), true);
+            //Render.lookAt(this._render, this._player.ship, Vector.create(500, 500), true);
+            Render.lookAt(this._render, this._player.ship, Vector.create(2500, 2500), true);
         }
+    }
+
+    public onAfterRender(): void {
+        this._UI.render();
     }
 
     public onBeforeUpdate(): void {

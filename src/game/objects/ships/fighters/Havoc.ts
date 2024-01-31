@@ -1,11 +1,11 @@
 
 import { Body, Vector } from "matter-js";
-import { Block } from "../components/blocks/Block";
-import { Ship } from "./Ship";
-import { Cockpit } from "../components/cockpit/Cockpit";
-import { Wing } from "../components/wings/Wing";
-import { ShipStats } from "./ShipStats";
-import { LightLaser } from "../weapons/lasers/LightLaser";
+import { Block } from "../../components/blocks/Block";
+import { Ship } from "../Ship";
+import { Cockpit } from "../../components/cockpit/Cockpit";
+import { Wing } from "../../components/wings/Wing";
+import { ShipStats } from "../ShipStats";
+import { LightLaser } from "../../weapons/lasers/LightLaser";
 
 export class Havoc extends Ship {
 

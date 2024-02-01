@@ -6,4 +6,8 @@ export class Projectile extends GameObject {
     constructor(position: Vector) {
         super(position, EGameObjectType.Projectile);
     }
+
+    public update(): void {
+
+    }
 }

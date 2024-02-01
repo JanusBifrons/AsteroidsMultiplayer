@@ -25,8 +25,6 @@ export class UI {
         var _x = this._renderingContext.canvas.width / 2;
         var _y = this._renderingContext.canvas.height - 30;
 
-        console.log(_x);
-
         this._renderingContext.lineWidth = 23;
         this._renderingContext.strokeStyle = 'white';
 

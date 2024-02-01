@@ -17,6 +17,7 @@ import { Keys } from "./Keys";
 import { Scrap } from "@/game/objects/Scrap";
 import { EGameObjectType } from "@/game/objects/GameObjectTypes";
 import { UI } from "@/game/ui/UI";
+import { Grid } from "./Grid";
 
 export class Game extends React.Component {
 
@@ -50,14 +51,14 @@ export class Game extends React.Component {
         this.createPlayer();
         this.createUI();
 
-        this._debugShip = new Havoc(Vector.create(350, 0));
-        //this._debugShip = new Debug(Vector.create(250, 0));
-        this._debugShip.body.label = "Debug Ship";
+        // this._debugShip = new Havoc(Vector.create(350, 0));
+        // //this._debugShip = new Debug(Vector.create(250, 0));
+        // this._debugShip.body.label = "Debug Ship";
 
-        this.addShip(this._debugShip);
+        // this.addShip(this._debugShip);
 
-        for (let i = 0; i < 100; i++) {
-            this.addShip(new Havoc(Vector.create(Math.random() * 5000, Math.random() * 5000)));
+        for (let i = 0; i < 10; i++) {
+            this.addShip(new Havoc(Vector.create(Math.random() * 100000, Math.random() * 100000)));
         }
 
         for (let i = 0; i < 1; i++) {
@@ -150,6 +151,8 @@ export class Game extends React.Component {
                 width: document.body.clientWidth,
                 height: document.body.clientHeight,
                 showSleeping: true,
+                //background: 'transparent',
+                //wireframeBackground: 'transparent',
                 //showAxes: true,
                 //showBounds: true,
                 showCollisions: true,
@@ -266,6 +269,10 @@ export class Game extends React.Component {
         Input.Update();
 
         this._player.update();
+
+        for (const gameObject of this._gameObjects) {
+            gameObject.update();
+        }
 
         if (Input.IsKeyDown(Keys.Delete)) {
             this._debugShip.destroy();

@@ -32,6 +32,14 @@ export class GameObject {
     }
 
     ///
+    /// PUBLIC
+    ///
+
+    public update(): void {
+
+    }
+
+    ///
     /// PRIVATE
     ///
 

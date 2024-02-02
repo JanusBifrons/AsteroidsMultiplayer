@@ -18,6 +18,7 @@ import { Scrap } from "@/game/objects/Scrap";
 import { EGameObjectType } from "@/game/objects/GameObjectTypes";
 import { UI } from "@/game/ui/UI";
 import { Grid } from "./Grid";
+import { Indicators } from "@/game/ui/Indicators";
 
 export class Game extends React.Component {
 
@@ -29,6 +30,7 @@ export class Game extends React.Component {
     private _gameObjects: GameObject[] = [];
     private _debugShip: Ship;
     private _UI: UI;
+    private _indicators: Indicators;
 
     ///
     /// MATTER 
@@ -51,11 +53,11 @@ export class Game extends React.Component {
         this.createPlayer();
         this.createUI();
 
-        // this._debugShip = new Havoc(Vector.create(350, 0));
+        this._debugShip = new Havoc(Vector.create(350, 0));
         // //this._debugShip = new Debug(Vector.create(250, 0));
-        // this._debugShip.body.label = "Debug Ship";
+        this._debugShip.body.label = "Debug Ship";
 
-        // this.addShip(this._debugShip);
+        this.addShip(this._debugShip);
 
         for (let i = 0; i < 10; i++) {
             this.addShip(new Havoc(Vector.create(Math.random() * 100000, Math.random() * 100000)));
@@ -68,6 +70,7 @@ export class Game extends React.Component {
 
     public createUI(): void {
         this._UI = new UI(this._render.context);
+        this._indicators = new Indicators(this._player);
     }
 
     public addShip(ship: Ship): void {
@@ -263,6 +266,7 @@ export class Game extends React.Component {
 
     public onAfterRender(): void {
         this._UI.render();
+        this._indicators.draw(this._render.context);
     }
 
     public onBeforeUpdate(): void {
@@ -274,9 +278,7 @@ export class Game extends React.Component {
             gameObject.update();
         }
 
-        if (Input.IsKeyDown(Keys.Delete)) {
-            this._debugShip.destroy();
-        }
+        this._indicators.update(this._gameObjects);
     }
 
     ///

@@ -17,11 +17,12 @@ export class Missile extends Projectile {
         const body = Bodies.rectangle(0, 0, 100, 10);
         Body.setAngle(body, angle);
         body.isSensor = true;
+        body.frictionAir = 1;
 
         this.setBody(body);
 
-        let x: number = Math.cos(angle) * (10 + speed);
-        let y: number = Math.sin(angle) * (10 + speed);
+        let x: number = Math.cos(angle) * (50 + speed);
+        let y: number = Math.sin(angle) * (50 + speed);
 
         // let x: number = Math.cos(angle);
         // let y: number = Math.sin(angle);
@@ -32,6 +33,8 @@ export class Missile extends Projectile {
     public update(): void {
         const x = this._target.position.x - this.body.position.x;
         const y = this._target.position.y - this.body.position.y;
+
+        const distance = Vector.magnitude(Vector.create(x, y));
 
         const desiredAngle = Math.atan2(y, x);
 
@@ -44,6 +47,10 @@ export class Missile extends Projectile {
         let xVel: number = Math.cos(this.body.angle) * 1;
         let yVel: number = Math.sin(this.body.angle) * 1;
 
-        Body.setVelocity(this.body, Vector.add(this.body.velocity, Vector.create(xVel, yVel)));
+        console.log(this.body.speed);
+
+        if (Math.abs(diffAngle) < 0.1) {
+            Body.setVelocity(this.body, Vector.add(this.body.velocity, Vector.create(xVel, yVel)));
+        }
     }
 }

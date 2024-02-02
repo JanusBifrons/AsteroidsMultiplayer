@@ -25,7 +25,7 @@ export class Havoc extends Ship {
         const launcherTwo = new MissileLauncher(Vector.create(-50, -200));
 
         launcherOne.setTarget(this.body);
-        launcherTwo.setTarget(this.body);
+        //launcherTwo.setTarget(this.body);
 
         this.addWeapon(launcherOne);
         //this.addWeapon(launcherTwo);

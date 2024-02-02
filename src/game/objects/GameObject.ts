@@ -100,4 +100,12 @@ export class GameObject {
     public get speed(): number {
         return this._body.speed;
     }
+
+    public get x(): number {
+        return this._body.position.x;
+    }
+
+    public get y(): number {
+        return this._body.position.y;
+    }
 }

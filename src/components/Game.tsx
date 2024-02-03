@@ -192,7 +192,6 @@ export class Game extends React.Component {
         Events.on(this._render, 'beforeRender', this.onBeforeRender.bind(this));
         Events.on(this._render, 'afterRender', this.onAfterRender.bind(this));
         Events.on(this._engine, 'collisionStart', this.onCollisionStart.bind(this));
-
     }
 
     ///

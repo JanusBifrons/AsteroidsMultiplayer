@@ -1,11 +1,11 @@
 'use client'
 
-import { P2JS } from "@/components/P2JS";
+import { Equinox } from "@/components/Equinox";
 
 export default function GamePage() {
     return (
         <div>
-            <P2JS></P2JS>
+            <Equinox />
         </div>
     );
 };
